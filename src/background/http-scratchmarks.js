@@ -1,0 +1,93 @@
+(function () {
+
+  "use strict";
+
+  const
+
+  ///////////
+  // APPLY //
+  ///////////
+
+  webRequestOptions = {
+    urls: ["<all_urls>"],
+    types: ["main_frame", "xmlhttprequest", "stylesheet", "script"]
+  },
+
+  /* do we have to request the available rules each time? */
+  searchAndReplace = request => {
+    console.log(request);
+    /*
+      0. return early if extension or site is disabled, or if no rules
+      are stored for either site or `request.url'
+
+      let filter = browser.webRequest.filterResponseData(request.requestId);
+
+      1. Use RuleFilter object to prune the rules associated with the
+      domain
+
+      let rules = new RuleFilter().filter();
+
+      2. if any apply, construct RequestSearchAndReplace with the pruned array.
+
+      let sr = new RequestSearchAndReplace(rules);
+
+      3. Pass request body to its exec();
+      //filter.ondata = event =>
+      filter.write(sr.exec(event.data)); filter.onstop = event =>
+      filter.disconnect(); */
+  },
+
+  /* start the background service with `searchAndReplace'
+     processing. Don't call start() from here -- whether to start or
+     not depends on what setting is stored. If there are no options
+     saved yet, the constructor will enable the extension and start
+     listening to requests automatically.*/
+  bg = new BackgroundService(webRequestOptions, searchAndReplace),
+
+  //////////
+  // EDIT //
+  //////////
+
+  /* Request processing is handled above. Here, the background is
+     exposed to accept messages from the popup. */
+  listenForConnections = () => {
+    browser.runtime.onConnect.addListener(
+      port  => port.onMessage.addListener(makeResponder(port)));
+  },
+
+
+  /* The responder calls the BackgroundService associated with the
+     service/method name in the `request' property, waits for the
+     results and sends them right back. At the speed of popup
+     interaction, we can just write the original request on the return
+     envelope of the payload and let the popup dispatch on that string
+     without having to worry about further synchronization. */
+
+  makeResponder = port => {
+
+    const respond = (message, response) => {
+      console.log("Sending ", { request: message.request, payload: response}, "to popup");
+      port.postMessage({
+        request: message.request,
+        payload: response
+      });
+    };
+
+    return (message, sender, sendResponse) => {
+      var requestResult = bg[message.request].bind(bg).apply(null, message.args);
+
+      // keep promises on the background
+      if (typeof requestResult.then === "function")
+        requestResult.then(result => respond(message, result));
+      else respond(message, requestResult);
+    };
+
+  }
+
+  ; // const defs end
+
+  //bg.reinitialize();
+
+  listenForConnections();
+
+})();

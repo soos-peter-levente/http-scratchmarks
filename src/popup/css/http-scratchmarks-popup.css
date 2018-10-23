@@ -1,0 +1,259 @@
+body {
+  font-family: sans-serif;
+  max-width: 350px;
+  min-width: 350px;
+}
+input {
+  border: none;
+  border-bottom: 1px solid gray;
+}
+label {
+  padding-bottom: 10px;
+}
+.edit-title-header,
+.main-title-header {
+  padding: 15px 0px 0px 15px;
+  text-align: center;
+  font-size: 14px;
+}
+.main-description {
+  font-size: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.main-view-container {
+  display: initial;
+}
+.edit-view-container {
+  display: none;
+}
+#edit-search,
+#edit-domain-path {
+  width: 70%
+}
+#edit-replace {
+  width: 100%;
+}
+.edit-segment {
+  display: flex;
+  padding-bottom: 15px;
+  padding-top: 5px;
+}
+.edit-segment select {
+  width: 25%;
+  margin-left: 10px;
+}
+#edit-main {
+  font-size: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+#main {
+  padding: 15px 0px 0px 15px;
+}
+#main-title {
+  display: flex;
+}
+.site-view-container {
+  font-size: 10px;
+}
+.site-name {
+  font-weight: normal;
+  cursor: pointer;
+}
+.site-path {
+  color: grey;
+  cursor: pointer;
+}
+.site-path:hover {
+  color: green;
+}
+.site-name:hover {
+  color: green;
+}
+.edit-rule-buttons,
+.site-rule-buttons {
+  display: block;
+  padding: 15px 15px 40px 0px;
+} 
+#edit-save-rule {
+  /*padding: 15px 0px 15px 0px;*/
+  float: right;
+}
+#edit-cancel {
+  float: left;
+}
+#site-add-rule{
+  float: right;
+}
+#site-edit-rule {
+  float:left;
+}
+button {
+  cursor: pointer;
+  border: none;
+  color: white;
+  padding: 10px;
+  background-color: #2196F3;
+  text-align: center;
+  text-decoration: none;
+}
+button:disabled {
+  cursor: not-allowed;
+  color: white;
+  background-color: silver;
+}
+.site-view-rules {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+
+/* RULE ACCORDION */
+.site-rule-accordion-wrapper {
+  display: flex;
+  width: 99%;
+}
+.site-rule-path {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+  width: 87%;
+  display: flex;
+  padding-right: 10px;
+}
+.site-rule-options {
+  cursor: pointer;
+  float: right;
+  font-size: 16px;
+  width: 11%;
+  text-align: right;
+  padding-top: 10px;
+  padding-right: 12px;
+}
+.site-rule-path:before {
+  content: "▶";
+  float: left;
+  padding-right: 10px;
+}
+.site-rule-path.active:before {
+  content: "▼"; 
+}
+.site-rule-path-text {
+  max-width: 90%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.site-rule-type {
+  float: right;
+}
+.site-rule-open, .site-rule-path:hover {
+  background-color: #ccc;
+}
+.site-rule-content {
+  padding: 0 18px;
+  display: none;
+  background-color: white;
+  overflow: hidden;
+}
+
+
+/* TABLE */
+.site-rule-table {
+  text-align: center;
+  padding-top: 15px;
+  padding-left: 15px;
+  width: 97%;
+}
+.site-rule-table-header-row {
+  font-size: 10px;
+}
+.site-rule-table-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-rule-table-row.option {
+  color: grey;
+  font-size: initial;
+  padding-right: 15px;
+  max-width: 18%;
+  min-width: 18%;
+}
+.site-rule-table .search,.site-rule-table .replace {
+  text-align: left;
+  float: left;
+  min-width: 41%;
+  max-width: 41%;
+}
+
+
+/* TOGGLE */
+#main-status {
+  margin-left: auto;
+  padding: 15px 0px 0px 30px;
+}
+
+#main-toggle, #site-toggle {
+  display: flex;
+  position: relative;
+  width: auto;
+}
+.toggle {
+  position: relative;
+  margin-left: auto;
+  transform: scale(0.6);
+}
+
+.toggle-label {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 24px;
+}
+.toggle-label input {
+  display:none;
+}
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+input:checked + .toggle-slider {
+  background-color: #2196F3;
+}
+input:focus + .toggle-slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .toggle-slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
