@@ -1,12 +1,236 @@
 (function () {
 
-  "use strict";
+  "use strict"; const // functional yay!
+
+  ////////////////
+  // BACKGROUND //
+  ////////////////
 
 
-  const
+  /* We communicate with the background using the API below, which
+   * mirrors the callable methods of BackgroundService (except for
+   * `dispatch', which is a popup-side exclusive background message
+   * handler).
+   *
+   * THe way this works is, it seems the Port messaging API doesn't
+   * have an onResponse listener (and sendResponse has disappeared
+   * some time ago?). The BackgroundService is set to send responses
+   * to each message from the popup, but the request and the response
+   * are only paired up via their label. The popup-side implements an
+   * API call as a.) the functions themselves and b.) the
+   * corresponding branch in the `dispatch' function, which tells the
+   * popup what to do with a response with a given label. In the
+   * js-docs below, @returns refers to the payload that is sent to
+   * `dispatch' in the response.
+   *
+   * By the way, all the background ever does in this direction is
+   * respond. It will never send anything to the popup without having
+   * first logged a corresponding message. The pop-up only sends
+   * messages to the background during initialization and after that,
+   * upon user action.*/
 
-  //// DOM
 
+  // API calls are made through this port (in `send')
+  background = browser.runtime.connect( { name: "background" } ),
+
+  // hook into  responses
+  addBackgroundListener = () =>
+    background.onMessage.addListener(dispatch),
+
+
+  removeBackgroundListener = () =>
+    background.onMessage.removeListener(dispatch),
+
+
+  /**
+   * Send a message with `label' and `args' to the background. Wrapper
+   * for the messaging API of the Port object.
+   * @param {string} label - name of the call to be invoked by the background.
+   * @param {array} args - array of arguments to be passed to the invocation
+   */
+  send = (label, ...args) => {
+    console.log("PU -> BG:", { label: label, args: args });
+    background.postMessage({
+      label: label,
+      args: args || []
+    });
+  },
+
+
+  /////////
+  // API //
+  /////////
+
+
+  /**
+   * Message background to `start' the extension (global).
+   */
+  start = () => send("start"),
+
+
+  /**
+   * Message background to `stop' the extension (global).
+   */
+  stop = () => send("stop"),
+
+
+  /**
+   * Message background to `clear' the contents of the local
+   * storage. All settings and saved sites/paths/rules are lost.
+   */
+  clear = () => send("clear"),
+
+
+  /**
+   * Message background to send extension `state' in the payload of a
+   * labeled asynchronous message.
+   * @returns {boolean} - enabled / disabled
+   */
+  state = () => send("state"),
+
+
+  /**
+   * Message background to `toggle' the extension (global).
+   */
+  toggle = () => send("toggle"),
+
+
+  /**
+   * Messagae background to `toggle' site status.
+   */
+  toggleSite = site => send("toggleSite", site),
+
+
+  /**
+   * Message background to send all `site'-related data in the payload
+   * of a labeled aynchronous message.
+   * @param {string} site - the domain for which to load the data.
+   * @returns {object} - {} or site data (state, paths & rules)
+   */
+  getSite = site => send("getSite"),
+
+
+  /**
+   * Message background to send data for each `path' associated with
+   * `site' in the payload of a labeled asynchronous message.
+   * @param {string} site - the domain for which to load the path(s).
+   * @param {array} paths - the path(s) to load.
+   * @returns {object} - {} or paths
+   */
+  getPath = (site, paths) => send("getPath", site, paths),
+
+
+  /**
+   * Message background to send all rules for each of the `paths'
+   * associated with `site'. in the payload of a labeled asynchronous
+   * message.
+   * @param {string} site - the domain for which to get paths.
+   * @param {object / array} paths - path or array of paths.
+   */
+  getRule = (site, paths) => send("getRule", site, paths),
+
+
+  /**
+   * Message background to set site to `status' (disable / enable it).
+   * @param {string} site - the domain to set
+   * @param {boolean} status - enabled / disabled
+   */
+  setSite = (site, status) => send("setSite", site, status),
+
+
+  /**
+   * Message background to set/update each `path' for `site'.
+   * @param {string} site - the domain for which to set `paths'
+   * @param {object / array} paths - a path or an array of paths
+   */
+  setPath = (site, paths) => send("setPath", site, paths),
+
+
+  /**
+   * Message the background to set/update `rules' for each  of `paths'.
+   * @param {string} site - the domain to associate the path & rules to.
+   * @param {object / array} paths - a path object or array of path objects
+   * @param {object / array} rules - a rule object or array of rule objects
+   */
+  setRule = (site, paths, rules) => send("setRule", site, paths, rules),
+
+
+  /**
+   * Message the background to delete from storage `site' and all
+   * associated paths and rules.
+   * @param {string} site - the domain to delete
+   */
+  delSite = site => send("delSite", site),
+
+
+  /**
+   * Message the background to delete from storage each of `paths', if
+   * associated with `site'.
+   * @param {string} site - the domain from which to delete paths.
+   * @param {object / array} paths - the path(s) to delete.
+   */
+  delPath = (site, paths) => send("delPath", site, paths),
+
+
+  /**
+   * Message the background to delete from storage each of `rules'
+   * from each of `paths' if associated with `site'.
+   * @param {string} site - the domain from which to delete rule(s).
+   * @param {object / array} paths - the path(s) from which to delete rule(s)
+   * @param {object / array} rules - the rule(s) to delete
+   */
+  delRule = (site, paths, rules) => send("delPath", site, paths, rules),
+
+
+  /**
+   * Handle responses sent by the background in response to API calls.
+   * @param {object} response - the response received from background.
+   */
+  dispatch = response => {
+    switch (response.label) {
+      case "getSite":
+      case "getPath":
+      case "getRule":    // redraw with payload
+      case "setSite":
+      case "setPath":
+      case "setRule":
+        renderData(response.payload);
+        break;;
+      case "delSite":
+      case "delPath":    // don't redraw
+      case "delRule":
+        /* The UI event handlers should take care of visual removal of
+         * elements. Deletion in storage has already happened by the
+         * time of dispatch, so this case is superfluous, but it's
+         * listed explicitly until behavior is sorted out.
+         */
+        deleteData(response.payload);
+        break;;
+      case "clear":
+        voidTheList();   // special case
+        break;;
+      case "start":
+      case "stop":
+      case "toggle":
+      case "state":
+        setSlider(mainToggle, response.payload);
+        break;;
+      case "toggleSite":
+        setSlider(siteToggle, response.payload);
+        break;;
+      default:
+        console.log("PU: NOP:", response);
+    }
+  },
+
+
+
+  ///////////////////////
+  // DOM & INTERACTION //
+  ///////////////////////
+
+
+  // DOM elements
   mainView = $(".main-view-container"),
   editView = $(".edit-view-container"),
 
@@ -46,31 +270,86 @@
      involved is too much for such a lean popup anyway. A domain
      selector dropdown below the main toggle could also work. */
 
-  getSiteName = () =>
+  getCurrentURL = callback =>
     browser.tabs.query({ currentWindow: true, active: true })
-    .then(tabs => new URL(tabs[0].url)),
-
-  
-  // BUILDING DOM ELEMENTS
-  // Two things require DOM fiddling: rules and the site toggle.
+    .then(tabs => new URL(tabs[0].url))
+    .then(url  => callback ? callback(url) : url),
 
 
-  renderDomain = url =>
-    siteUseText.html("Use on: ").append(renderHost(url.host)),
+
+  ///////////////////////
+  // UI EVENT HANDLERS //
+  ///////////////////////
 
 
-  renderHost = url =>
-    $("<span>").attr("title", "Add rule for domain")
-      .addClass("site-name").text(url)
-      .on("click", addDomainRule),
+  saveRule = event => {
+    console.log("save rule:", inputToObject());
+  },
 
 
-  renderSiteData = siteData => {
+  addRule = event => {
+    editTitle.text("Add new rule");
+    showEdit();
+    pathInput.focus();
+  },
+
+
+  addDomainRule = event => {
+    editTitle.text("Add new rule");
+    getCurrentURL().then(url => pathInput.val(url.host));
+    showEdit();
+    searchInput.focus();
+  },
+
+
+  editRule = event => {
+    editTitle.text("Edit rule");
+    showEdit();
+  },
+
+
+  stopEdit = event => {
+    nullifyInputValues();
+    showMain();
+  },
+
+
+  // function keyword to bind `this'
+  toggleContents = function (event) {
+    $(this).siblings(".site-rule-content").toggle();
+  },
+
+
+  deleteThisRule = function (event) {
+    // we could be a bit more forgiving than this.
+    $(this).closest(".site-rule-wrapper").remove();
+  },
+
+
+  editThisRule = function (event) {
+    console.log("Edit the rule: ", $(this));
+  },
+
+
+  deleteData = siteData => console.log("deleting data:", siteData),
+
+
+  voidTheList = () => siteRules.html(""),
+
+
+
+  ///////////////
+  // RENDERING //
+  ///////////////
+
+
+  renderData = siteData => {
+
+    renderDomain();
+
     if ($.isEmptyObject(siteData)) return;
 
-    siteRules.html(
-      Mustache.render($("#site-rule-template").html(), siteData)
-    );
+    siteRules.html(Mustache.render($("#site-rule-template").html(), siteData));
 
     $(".site-rule-options").on("click", deleteThisRule);
     $(".site-rule-accordion-wrapper").on("click", toggleContents);
@@ -81,35 +360,16 @@
 
   },
 
-  // event handlers, function keyword to bind `this'
-  toggleContents = function (event) {
-    $(this).siblings(".site-rule-content").toggle();
-  },
-
-
-  deleteThisRule = function (event) {
-    // we could be a bit more forgiving than this.
-    $(this).closest(".site-rule-wrapper").remove();
-    setRule();
-  },
-
-
-  editThisRule = function (event) {
-    console.log("Edit the rule: ", $(this));
-  },
+  renderDomain = () =>
+    getCurrentURL(url => siteUseText.html(
+      Mustache.render($("#site-name-template").html(), { domain: url.host }))
+                  .find(".site-name").on("click", addDomainRule)),
 
 
   // READING FROM THE DOM
 
-  /* 1. take whatever is in the input fields (inputToObject)
-     2. read all remaining rules from the list (collectExistingRules)
-     3. merge the new rule if present (mergeRule)
-     4. send result to background (setRule)
 
-     We don't really want to instantiate the Rule objects that we
-     gleam over yonder in the background. In other news, it's too bad
-     that blocks and the object literals overlap in JS syntax:
-     implicit returns of arrow functions don't work in these cases. */
+  // None of them yonder Rule objects.
   ruleObject = (type, search, replace, enabled) => {
     return {
       ruleIsEnabled: enabled || true,
@@ -121,14 +381,13 @@
 
 
   inputToObject = () => {
-    /* Do it simply. Merging a new rule with the existing list and
-       sending everything in a single whoosh delivers us from the
-       delta management logic that would otherwise result.
-
-       The list of rules to be saved is canonized early in the pipe,
-       close to where input validation will be happening, which
-       means that hopefully fewer inscrutable errors will be barfed
-       up from the bowels of the extension. */
+    /* Change of heart. User input validation should indeed happen
+     * here, but let's not use non-input DOM as a two-way
+     * thing. Templates only get stuff, they shouldn't give them
+     * back. As for the inputs, we'll only send single rules (brand
+     * new ones or edits) or delete requests, and we'll take
+     * responsibility for sanitization. The background will do all the
+     * merging and deleting. */
     return {
       pathIsEnabled: true,
       pathType: pathDropdown.val(),
@@ -142,311 +401,45 @@
   },
 
 
-  collectAllRules = () => mergeRule(inputToObject(), collectExistingRules()),
-
-
-  collectExistingRules = () =>
-    Array.from(siteRules.find(".site-rule-wrapper")).map(collectPath) || [],
-
-
-  collectPath = wrapper => {
-    return {
-      pathIsEnabled: true,
-      pathType: $(wrapper).find("button").attr("data-path-type"),
-      pathName: $(wrapper).find(".site-rule-path").text(),
-      ruleList: Array.from(collectRuleList($(wrapper).find("table")))
-    };
-  },
-
-
-  collectRuleList = table =>
-    Array.from(table.find("tr.site-rule-table-row"))
-      .map(row =>
-           ruleObject(
-             $(row).find(".search").attr("data-match-type"),
-             $(row).find(".search").text(),
-             $(row).find(".replace").text())),
-
-  // this is up next
-
-  mergeRule = (rule, existingRules) => {
-    /* if the domain already has rules
-          if a set of rules for the same match type and path exists
-             merge rule with that specific array of rules
-          else create new path and type and add first rule
-       else add first rule to domain  */
-    if (existingRules.length !== 0 ) {
-      let [ samePath, pathIndex ] = findSamePath(existingRules, rule.pathName, rule.pathType);
-      if (samePath && pathIndex) {
-        console.log("Merging rule", rule, "with", existingRules);
-        mergeRuleIntoPath(rule, pathIndex, existingRules);
-      }
-    } else {
-      existingRules.push(rule);
-    }
-    return existingRules;
-  },
-
-
-  findSamePath = (rules, path, type) => {
-    for (let rule in rules) {
-      if (rules[rule].pathName === path && rules[rule].pathType === type)
-        return [ true, rule ];
-    }
-    return [ undefined, undefined ];
-  },
-
-
-  mergeRuleIntoPath = (rule, index, rules) => {
-    console.log(rules);
-    if (rules[index].ruleSearch !== rule.ruleSearch &&
-        rules[index].ruleReplace !== rule.ruleReplace &&
-        rules[index].ruleType !== rule.ruleType)
-      return rules;
-    else
-      rules.push(rule);
-    return rules;
-  },
-
-
   nullifyInputValues = () => {
     pathInput.val("");
     searchInput.val("");
     replaceInput.val("");
-  },
-
-  
-  //// BACKGROUND CONNECTION & PERSISTED DATA
-
-  // this is our tunnel to the extension's services.
-  background = browser.runtime.connect( { name: "background" } ),
-
-
-  /* Handle incoming background responses. Requests are the only
-     things that point "inside", and only responses ever come out.
-
-     Response-request pairs are associated via name and via name
-     only. Whenever a response is received, it is dispatched on in a
-     uniform fashion, which should be okay at UI speeds (meaning I
-     hope not to have to worry about the order in which responses
-     arrive and dispatches are triggered). Also, given the way the
-     Port API is used (the background only ever fires for onMessage
-     events), we can rely on it never to send anything without having
-     first logged a corresponding request from the popup. */
-  listenForBackgroundResponses = () =>
-    background.onMessage.addListener(dispatchResponse),
-
-
-  /* Right now, two kinds of responses trigger action in the popup: a
-     list of rules to be rendered, and state toggling. If and when the
-     UI is refined to do more error handling on user input, setRule()
-     should also be dispatched on. */
-  dispatchResponse = response => {
-    switch (response.request) {
-      case "getRule":
-        renderSiteData(response.payload);
-        break;;
-      case "toggleMain":
-      case "isEnabled":
-        setSlider(mainToggle, response.payload);
-        break;;
-      case "toggleSite":
-      case "isSiteEnabled":
-        setSlider(siteToggle, response.payload);
-        break;;
-      default:
-        console.log("POPUP: no-action response:", response);
-    }
-  },
-
-
-  // /**
-  //  * Message background to `start' the extension globally.
-  //  */
-  // start = () => {},
-
-
-  // /**
-  //  * Message background to `stop' the extension globally.
-  //  */
-  // stop = () => {},
-
-
-  // /**
-  //  * Message background to `clear' the contents of the local
-  //  * storage. All settings and saved sites/paths/rules are lost.
-  //  */
-  // clear = () => {},
-
-
-  // /**
-  //  * Message background to send extension `state' in the payload of a
-  //  * labeled asynchronous message.
-  //  * @returns {boolean} - enabled / disabled
-  //  */
-  // state = () => {},
-
-
-  // /**
-  //  * Message background to send all `site'-related data in the payload
-  //  * of a labeled aynchronous message.
-  //  * @param {string} site - the domain for which to load the data.
-  //  */
-  // getSite = site => {},
-
-
-  // /**
-  //  * Message background to send data for each `path' associated with
-  //  * `site' in the payload of a labeled asynchronous message.
-  //  * @param {string} site - the domain for which to load the path(s).
-  //  * @param {array} paths - the path(s) to load.
-  //  */
-  // getPath = (site, paths) => {},
-
-
-  // /**
-  //  * Message background to send all rules for each of the `paths'
-  //  * associated with `site'. in the payload of a labeled asynchronous
-  //  * message.
-  //  * @param {} site
-  //  * @param {} paths
-  //  */
-  // getRule = (site, paths) => {},
-
-
-  // /**
-  //  * Message background to set site to `status' (disable / enable it).
-  //  * @param {string} site - the domain to set
-  //  * @param {boolean} status - enabled / disabled
-  //  */
-  // setSite = (site, status) => {},
-
-  // /**
-  //  * Message background to set/update each `path' for `site'.
-  //  * @param {string} site - the domain for which to set `paths'
-  //  * @param {object / array} paths - a path or an array of paths
-  //  */
-  // setPath = (site, paths) => {
-
-  // },
-
-  // /**
-  //  * Message the background to set/update `rules' for each  of `paths'.
-  //  * @param {string} site - the domain to associate the path & rules to.
-  //  * @param {object / array} paths - a path object or array of path objects
-  //  * @param {object / array} rules - a rule object or array of rule objects
-  //  */
-  // setRule = (site, paths, rules) => {},
-
-
-  getData = () => {
-    getSiteName()
-      .then(url => {
-        renderDomain(url);
-        getRule(url.host);
-      });
-  },
-
-  
-  isEnabled = () => {
-    background.postMessage({
-      request: "isEnabled"
-    });
-  },
-
-
-  isSiteEnabled = () => {
-    background.postMessage({
-      request: "isSiteEnabled"
-    });
-  },
-
-
-  getRule = domain => {
-    background.postMessage({
-      request: 'getRule',
-      args: [ domain ]
-    });
-  },
-
-  toggleMain = event => {
-    background.postMessage({
-      request: "toggleMain"
-    });
-    setSlider(mainToggle, !mainToggle.checked);
-  },
-
-  toggleSite = event => {
-    background.postMessage({
-      request: "toggleSite",
-      args: [ getSiteName() ]
-    });
-    setSlider(siteToggle, !siteToggle.checked);
-  },
-
-  setRule = event => {
-    getSiteName()
-      .then(url =>
-        background.postMessage({
-          request: "setRule",
-          args: [ url.hostname, {
-            siteIsEnabled: siteToggle.prop("checked"),
-            rules: collectAllRules()
-          } ]
-        }))
-      .then(() => getData().then(() => stopEdit()));
-  },
-
-  //// LISTENERS AND INTERACTION HANDLERS (UI only, no background)
-
-  addRule = event => {
-    editTitle.text("Add new rule");
-    showEdit();
-    pathInput.focus();
-  },
-
-  addDomainRule = event => {
-    editTitle.text("Add new rule");
-    getSiteName().then(url => pathInput.val(url.host));
-    showEdit();
-    searchInput.focus();
-  },
-
-  editRule = event => {
-    editTitle.text("Edit rule");
-    showEdit();
-  },
-
-  stopEdit = event => {
-    nullifyInputValues();
-    showMain();
   }
 
-  ; // const defs end here
 
-  // INIT
+  ; // end const defs
 
-  mainToggle.on("click", toggleMain);
+
+  //////////
+  // INIT //
+  //////////
+
+
+  // background messaging
+  mainToggle.on("click", toggle);
+
 
   siteToggle.on("click", toggleSite);
 
-  saveButton.on("click", setRule);
-  // UI only, no background message
+
+  saveButton.on("click", saveRule);
+
+  // UI events
   editButton.on("click", editRule);
+
 
   addButton.on("click", addRule);
 
+
   cancelButton.on("click", stopEdit);
 
-
-  // load-time calls
-  isEnabled();
-
-  isSiteEnabled();
-
-  getData();
-
-  listenForBackgroundResponses();
+  // make a few calls
+  getCurrentURL(url => {
+    state();
+    getSite(url.host);
+    addBackgroundListener();
+  });
 
   // we are in business
 

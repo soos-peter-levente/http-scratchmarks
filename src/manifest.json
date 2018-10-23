@@ -4,8 +4,6 @@
   "name": "HTTP Scratchmarks",
   "version": "0.1",
 
-  "content-security-policy": "default-src 'self'",
-  
   "permissions": [
     "activeTab",
     "storage",

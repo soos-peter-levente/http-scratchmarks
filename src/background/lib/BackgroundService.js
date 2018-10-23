@@ -1,3 +1,19 @@
+var example = {
+  site: "example.org",
+  siteIsEnabled: true,
+  paths: [{
+    pathIsEnabled:true,
+    pathType: "domain", // domain, path, prefix, regexp
+    pathName: "example.org",
+    ruleList: [{
+      ruleType: "string", // string, regexp
+      ruleSearch: "aaa",
+      ruleReplace: "bbb",
+      ruleIsEnabled: true
+    }]
+  }]
+}
+
 var BackgroundService = (function () {
 
   /* The BackgroundService has two purposes: first, it snoops on HTTP
@@ -28,67 +44,55 @@ var BackgroundService = (function () {
   };
 
   BackgroundService.prototype = {
-
-    // request processing
     start: function () {
       browser.webRequest.onBeforeRequest.addListener(
         this.processor, this.settings.request, ["blocking"]);
+      this.settings.enabled = true;
     },
-
     stop: function () {
       browser.webRequest.onBeforeRequest.removeListener(this.processor);
+      this.settings.enabled = false;
     },
-
-    // global & site-specific state
-    isEnabled: function () {
+    clear: function () {
+      return storage.clearAll();
+    },
+    state: function () {
       return this.settings.enabled;
     },
-
-    isSiteEnabled: function (domain) {
-      return storage.get(domain).then(stored => stored[domain].enabled);
-    },
-
-    toggleMain: function () {
+    toggle: function () {
       this.settings.enabled = !this.settings.enabled;
       (this.settings.enabled) ? this.start() : this.stop();
       return this.settings.enabled;
     },
+    toggleSite: function (site) {
+      if (site === undefined)
+        // otherwise, everything is returned for an empty query...
+        throw new Error("Required parameter 'site' is undefined!");
 
-    toggleSite: function (domain) {
-      // be careful, if domain is undefined, everything is returned
-      // this knows too much
-      return storage.get(domain)
+      return storage.get(site)
         .then(stored => {
-          stored[domain].enabled = !stored[domain].enabled;
-          this.setRule(domain, stored[domain]);
+          stored[site].enabled = !stored[site].enabled;
+          this.setRule(site, stored[site]);
         });
-    },
 
-    // manage rules in storage
-    getRule: function (domain) {
-      return storage.get(domain).then(stored => stored[domain] || {});
     },
-
-    getAll: function () {
-      return storage.getAll();
+    getSite: function (site) {
+      return storage.get(site).then(stored => stored[site] || {});
     },
-
-    setRule: function (domain, rules) {
-      return storage.put(domain, rules);
+    getPath: function (site, paths) {},
+    getRule: function (site, paths) {},
+    setSite: function (site, status) {},
+    setPath: function (site, paths) {
+      return storage.put(site, paths);
     },
-
-    delRule: function (domain, rules) {
-      // get the rules, reindex and put it back
-      return storage.del(domain, rules);
+    setRule: function (site, paths, rules) {
+      return storage.put(site, rules);
     },
-
-    delDomain: function (domain) {
-      return storage.remove(domain);
+    delSite: function (site) {
+      return storage.remove(site);
     },
-
-    reinitialize: function () {
-      return storage.clearAll();
-    }
+    delPath: function (site, paths) {},
+    delRule: function (site, paths, rules) {},
 
   };
 

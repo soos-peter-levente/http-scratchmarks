@@ -65,21 +65,25 @@
 
   makeResponder = port => {
 
+    /* TODO: figure out a nicer way of responding to popup messages.
+     *  Alas, sendResponse is not available.
+     *  https://github.com/mozilla/webextension-polyfill/issues/16#issuecomment-296693219
+     */
     const respond = (message, response) => {
-      console.log("Sending ", { request: message.request, payload: response}, "to popup");
+      console.log("BG -> PU:", { label: message.label, payload: response});
       port.postMessage({
-        request: message.request,
+        label: message.label,
         payload: response
       });
     };
 
-    return (message, sender, sendResponse) => {
-      var requestResult = bg[message.request].bind(bg).apply(null, message.args);
-
+    return (message) => {
+      var response = bg[message.label].bind(bg).apply(null, message.args);
       // keep promises on the background
-      if (typeof requestResult.then === "function")
-        requestResult.then(result => respond(message, result));
-      else respond(message, requestResult);
+      if (typeof response.then === "function")
+        response.then(response => respond(message, response));
+      else respond(message, response);
+
     };
 
   }
