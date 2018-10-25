@@ -408,7 +408,7 @@
   renderRule = (rule, path) => {
     let ruleElement = $(render(ruleTemplate, rule));
     ruleElement.find(".delete").on("click", event => deleteRule(rule, path, event.target));
-    ruleElement.find(".edit").on("click", event => edit(rule, path));
+    ruleElement.find(".search, .replace").on("click", event => edit(rule, path));
     return ruleElement;
   }
 

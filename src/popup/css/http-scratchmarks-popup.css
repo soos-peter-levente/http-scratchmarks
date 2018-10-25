@@ -6,10 +6,15 @@ body {
   overflow-y: hidden;
   height: 100%;
   margin: 0px;
+  display:flex;
+  flex-direction: column;
 }
 @media screen and ( min-height: 550px ) {
   body {
     overflow-y: visible;
+  }
+  .site-view-footer {
+    box-shadow: 0px 0px 2px 1px #88888888;
   }
 }
 
@@ -129,6 +134,11 @@ button:disabled {
   opacity: 100;
   visibility: visible;
 }
+.site-rule-wrapper.active .site-rule-options {
+  opacity: 100;
+  visibility: visible;
+}
+
 .site-rule-wrapper:hover {
   box-shadow: 0px 0px 5px 0px #88888888;
 }
@@ -150,7 +160,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
 /* ICON ROW */
 
 .site-view-footer {
-  box-shadow: 0px 0px 2px 1px #88888888;
+  flex: 1;
   position: fixed;
   bottom: 0px;
   padding-top: 15px;
@@ -171,7 +181,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   height: auto;
 }
 .site-icon {
-  background-color: grey;
+  background-color: dimgray;
   transition: background-color 0.4s;
   cursor: pointer;
   height: 0;
@@ -238,21 +248,33 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   padding-right: 10px;
 }
 .site-rule-options .delete {
-  background: url(../icons/trash-alt-regular.svg);
-  background-repeat: no-repeat;
+  background-color: darkgray;
+  transition: background-color 0.2s;
+  mask-image: url(../icons/trash-alt-regular.svg);
+  mask-repeat: no-repeat;
   height: 0;
   width: 0;
   padding: 10px;
   margin-right: 5px;
   margin-top: 10px;
 }
+.site-rule-options .delete:hover {
+  background-color: black;
+}
 .site-rule-path:before {
-  content: "▶";
+  mask-image: url(../icons/chevron-right-solid.svg);
+  mask-repeat: no-repeat;
+  transition: all 0.4s;
+  content: "";
   float: left;
-  padding-right: 10px;
+  padding-right: 15px;
+  background-color: darkgray;
+  margin-top: 4px;
 }
 .site-rule-wrapper.active .site-rule-path:before {
-  content: "▼"; 
+  transform: rotate(90deg);
+  transform-origin: center;
+  content: "";
 }
 .site-rule-path-text {
   max-width: 90%;
@@ -279,6 +301,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   font-size: 10px;
 }
 .site-rule-table-row {
+  cursor: pointer;
   padding-top: 10px;
   padding-bottom: 10px;
   font-size: 10px;
@@ -287,26 +310,25 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   white-space: nowrap;
 }
 .site-rule-table-row.options {
-  color: grey;
+  color: darkgray;
   font-size: initial;
   max-width: 18%;
-  min-width: 18%;
+  min-width: 10%;
 }
 .site-rule-table-row.options * {
+  background-color: darkgray;
   cursor: pointer;
   height: 0;
   width: 0;
 }
 .site-rule-table-row.option.delete {
-  background: url(../icons/trash-alt-regular.svg);
-  background-repeat: no-repeat;
+  mask-image: url(../icons/times-solid.svg);
+  transition: background-color 0.2s;
+  mask-repeat: no-repeat;
   padding: 8px 8px 8px 8px;
 }
-.site-rule-table-row.option.edit {
-  background: url(../icons/edit-regular.svg);
-  background-repeat: no-repeat;
-  padding: 8px 10px 10px 10px;
-  margin-right: 5px;
+.site-rule-table-row.option.delete:hover {
+  background-color: black;
 }
 .site-rule-table .search,.site-rule-table .replace {
   text-align: left;

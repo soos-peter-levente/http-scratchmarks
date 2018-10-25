@@ -97,7 +97,7 @@
             <span class="site-rule-path-text" title={{ pathName }}>{{ pathName }}</span>
           </button>
           <div class="site-rule-options">
-            <span class="site-rule-options delete"></span>
+            <span class="site-rule-options delete" title="Delete path & associated rules."></span>
           </div>
         </div>
         <div class="site-rule-content">
@@ -115,10 +115,10 @@
 
     <script id="site-rule-template" type="text/template">
       <tr class="site-rule-table-row">
-        <td class="site-rule-table-row search" title="{{ ruleType }}">{{ ruleSearch }}</td>
-        <td class="site-rule-table-row replace" >{{ ruleReplace }}</td>
+        <td class="site-rule-table-row search" title="Click to edit.">{{ ruleSearch }}</td>
+        <td class="site-rule-table-row replace" title="Click to edit." >{{ ruleReplace }}</td>
         <td class="site-rule-table-row options">
-          <span class="site-rule-table-row option edit" title="Edit this rule."></span>
+          <!--  <span class="site-rule-table-row option edit" title="Edit this rule."></span> -->
           <span class="site-rule-table-row option delete" title="Delete this rule."></span>
         </td>
       </tr>
