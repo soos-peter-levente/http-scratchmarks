@@ -121,13 +121,12 @@ button:disabled {
 }
 
 .site-view-rules {
-  padding-top: 15px;
-  padding-right: 15px;
+  margin-right: 15px;
+  margin-top: 25px;
 }
 .site-rule-wrapper {
-  box-shadow: 0px 0px 2px 0px #88888888;
-  margin-bottom: 15px;
-  transition: box-shadow 0.2s;
+  box-shadow: 0px 0px 1px 0px #88888888;
+  transition: all 0.2s;
   padding: 0px;
 }
 .site-rule-wrapper:hover .site-rule-options {
@@ -138,23 +137,29 @@ button:disabled {
   opacity: 100;
   visibility: visible;
 }
-
+.site-rule-wrapper.active {
+  box-shadow: 0px 0px 4px 0px #88888888;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 .site-rule-wrapper:hover {
-  box-shadow: 0px 0px 5px 0px #88888888;
+  box-shadow: 0px 0px 4px 0px #88888888;
 }
 /* Well.
 https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-out-transition-which-uses-max-height-transitio
 */
 .site-rule-content {
   max-height: 0;
-  transition: max-height 0.5s cubic-bezier(0,1,0,1);
+  transition: all 0.5s cubic-bezier(0,1,0,1);
   transition-delay: 0s;
   background-color: white;
   overflow: hidden;
+  border-top: 0px solid lightgray;
 }
 .site-rule-content.active {
   transition: max-height 1s ease-in-out;
   max-height: 2500px;
+  border-top: 1px solid lightgray;
 }
 
 /* ICON ROW */
@@ -181,8 +186,8 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   height: auto;
 }
 .site-icon {
-  background-color: dimgray;
-  transition: background-color 0.4s;
+  background-color: darkgray;
+  transition: background-color 0.5s;
   cursor: pointer;
   height: 0;
   width: 0;
@@ -234,6 +239,9 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   display: flex;
   width: 99%;
 }
+button::-moz-focus-inner {
+  border: 0;
+}
 .site-rule-path {
   background-color: transparent;
   color: #444;
@@ -262,18 +270,18 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   background-color: black;
 }
 .site-rule-path:before {
-  mask-image: url(../icons/chevron-right-solid.svg);
+  mask-image: url(../icons/caret-right-solid.svg);
   mask-repeat: no-repeat;
   transition: all 0.4s;
   content: "";
-  float: left;
-  padding-right: 15px;
+  width: 10px;
   background-color: darkgray;
   margin-top: 4px;
+  margin-right: 10px;
 }
 .site-rule-wrapper.active .site-rule-path:before {
   transform: rotate(90deg);
-  transform-origin: center;
+  transform-origin: center center;
   content: "";
 }
 .site-rule-path-text {
@@ -289,16 +297,23 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   /*background-color: #ccc;*/
 }
 
-
 /* TABLE */
 .site-rule-table {
+  border-spacing: 0px;
   text-align: center;
+  width: 100%;
   padding-top: 15px;
-  padding-left: 15px;
-  width: 97%;
+}
+.site-rule-table-cell.search,
+.site-rule-table-header.search {
+  padding-left: 30px;
 }
 .site-rule-table-header-row {
   font-size: 10px;
+  font-style: bold;
+}
+.site-rule-table-header-row th {
+  padding-bottom:10px;
 }
 .site-rule-table-row {
   cursor: pointer;
@@ -308,12 +323,12 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 30px;
 }
 .site-rule-table-row.options {
-  color: darkgray;
+  color: gainsboro;
   font-size: initial;
-  max-width: 18%;
-  min-width: 10%;
+  min-width: 16%;
 }
 .site-rule-table-row.options * {
   background-color: darkgray;
@@ -323,16 +338,25 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
 }
 .site-rule-table-row.option.delete {
   mask-image: url(../icons/times-solid.svg);
-  transition: background-color 0.2s;
   mask-repeat: no-repeat;
-  padding: 8px 8px 8px 8px;
+  padding: 2px 6px 6px 6px;
 }
-.site-rule-table-row.option.delete:hover {
+.site-rule-table-row:nth-child(even) {
+  background-color: #F5F5F5;
+}
+.site-rule-table-row:hover,
+.site-rule-table-row:nth-child(even):hover {
+  background-color: gold;
+}
+.site-rule-table-row:hover .option.delete {
+  background-color: darkgray;
+}
+.site-rule-table-row .option.delete:hover {
   background-color: black;
 }
 .site-rule-table .search,.site-rule-table .replace {
+  font-weight: normal;
   text-align: left;
-  float: left;
   min-width: 41%;
   max-width: 41%;
 }

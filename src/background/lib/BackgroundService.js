@@ -40,6 +40,100 @@ const BackgroundService = (function () {
      Big a Whoop to let the popup use a single tunnel. */
 
 
+  mergePath = function (pathList, newData) {
+
+      let
+      newPathList,
+
+      newRule = {
+          ruleIsEnabled: true,
+          ruleSearch: newData.rule.search,
+          ruleReplace: newData.rule.replace,
+          ruleType: newData.rule.ruleType
+      },
+
+      // new path & rule
+      newPath = {
+        pathIsEnabled: true,
+        pathType: newData.path.pathType,
+        pathName: newData.path.pathName,
+        rules: [ ]
+      },
+
+      existingPathIndex,
+      existingRuleIndex
+
+      ;
+
+      console.log("Merging", newData, "into", pathList);
+      console.log("Created new rule", newRule);
+      console.log("Created new path", newPath);
+
+      // if empty, create
+      if (isEmptyObject(pathList)) {
+        console.log("There are no rules associated with domain.");
+        pathList = {
+          siteIsEnabled: true,
+          paths:  []
+        };
+      }
+
+      console.log(pathList);
+
+      console.log("Checking to see if", pathList.paths, "contains", newPath);
+
+      for (let i = 0; i < pathList.paths.length; i++){
+        console.log("i is", i);
+        if (newPath.pathName === pathList.paths[i].pathName &&
+            newPath.pathType === pathList.paths[i].pathType ){
+          existingPathIndex = i;
+          console.log("Found similar path at index",i);
+          break;
+        }
+      }
+
+
+      if (existingPathIndex !== undefined) {
+        var rulesForPath = pathList.paths[existingPathIndex].rules;
+        console.log("Checking to see if", rulesForPath, "contains", newRule);
+        for (let i = 0; i < rulesForPath.length; i++) {
+          let rule = rulesForPath[i];
+          if (rule.ruleType === newRule.ruleType &&
+              rule.ruleSearch === newRule.ruleSearch &&
+              rule.ruleReplace === newRule.ruleReplace ) {
+            existingRuleIndex = i;
+            console.log("Found similar path at index", i);
+          }
+        };
+      }
+
+      console.log("Existing path index:", existingPathIndex);
+      console.log("Existing rule index:", existingRuleIndex);
+
+      if (existingPathIndex !== undefined &&
+          existingRuleIndex !== undefined) {
+        console.log("BG: PATH+RULE exist. Return paths unchanged.");
+      } else if (existingPathIndex !== undefined) {
+        console.log("BG: PATH exists. Merging new rule.");
+        pathList.paths[existingPathIndex].rules.push(newRule);
+      } else {
+        console.log("BG: Pushing new path & rule.");
+        newPath.rules.push(newRule);
+        pathList.paths.push(newPath);
+      }
+
+      console.log("Returning", pathList);
+      return pathList;
+    },
+
+
+
+  /////////
+  // API //
+  /////////
+
+
+
   BackgroundService = function (webRequestOptions, processor) {
     // First, load all settings
     this.settings = {
@@ -56,12 +150,9 @@ const BackgroundService = (function () {
   isEmptyObject = obj =>
     Object.keys(obj).length === 0 && obj.constructor === Object,
 
+
   storage = new Storage();
 
-
-  /////////
-  // API //
-  /////////
 
 
   BackgroundService.prototype = {
@@ -115,46 +206,9 @@ const BackgroundService = (function () {
 
     put: function (rule) {
       return this.get(rule.site)
-        .then(stored => this.merge(stored, rule))
+        .then(stored => mergePath(stored, rule))
         .then(result => storage.put(rule.site, result)
               .then(()=> this.get(rule.site)));
-    },
-
-
-    merge: function (existingData, newData) {
-
-      let result = existingData;
-
-      // if empty, create
-      if (isEmptyObject(result)) {
-        result = {
-          siteIsEnabled: true,
-          paths:  []
-        };
-      }
-
-      // new rule
-      let newRule =  {
-        ruleIsEnabled: true,
-        ruleSearch: newData.rule.search,
-        ruleReplace: newData.rule.replace,
-        ruleType: newData.rule.ruleType
-      };
-
-      // new path
-      let newPath = {
-        pathIsEnabled: true,
-        pathType: newData.path.pathType,
-        pathName: newData.path.pathName,
-        rules: [ newRule ]
-      };
-
-      /* I'm still exploring the question of how to merge the thing
-       *  with the extant rules. In the time being, we'll just push.
-       */
-
-      result.paths.push(newPath);
-      return result;
     },
 
 
@@ -164,7 +218,7 @@ const BackgroundService = (function () {
 
   };
 
-  
+
   return BackgroundService;
 
 })();
