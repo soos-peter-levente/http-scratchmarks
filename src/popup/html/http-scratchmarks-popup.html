@@ -27,7 +27,7 @@
           <div id="site">
             <div id="site-status">
               <div id="site-toggle">
-                <h3 class="toggle-text">Use here: </h3>
+                <h3 class="toggle-text"></h3>
                 <div class="toggle">
                   <label class="toggle-label">
                     <input type="checkbox" checked>
@@ -37,17 +37,8 @@
               </div>
             </div>
           </div>
-          <div class="site-view-rules">
-
-          </div>
-          <div class="site-rule-buttons">
-            <div id="site-edit-rule">
-              <button disabled>Edit rule</button>
-            </div>
-            <div id="site-add-rule">
-              <button>Add rule</button>
-            </div>
-          </div>
+          <div class="site-view-rules"></div>
+          
         </div>
       </div>
     </div>
@@ -56,6 +47,7 @@
         <h1 class="edit-title-header">Edit rule</h1>
       </div>
       <div id="edit-main">
+        <div id="path-id" data-path-id></div>
         <div id="edit-domain">
           <label class="input-label" for="edit-domain-path">If a URL matches</label>
           <div class="edit-segment">
@@ -69,6 +61,7 @@
           </div>
         </div>
         <div id="edit-rule">
+          <div id="rule-id" data-rule-id></div>
           <label class="input-label" for="edit-search">replace</label>
           <div class="edit-segment">
             <input id="edit-search" type="text" placeholder="string or regex" />
@@ -94,18 +87,17 @@
     </div>
 
     <script id="site-name-template" type="text/template">
-     Use on: <span class="site-name" title="Add rule for domain">{{ domain }}</span>
+     Apply these rules on <span class="site-name" title="Add rule for domain">{{ domain }}</span>
     </script>
 
-    <script id="site-rule-template" type="text/template">
-      {{# rules }}
+    <script id="site-path-template" type="text/template">
       <div class="site-rule-wrapper">
         <div class="site-rule-accordion-wrapper">
           <button class="site-rule-path">
             <span class="site-rule-path-text" title={{ pathName }}>{{ pathName }}</span>
           </button>
           <div class="site-rule-options">
-            <i class="fas fa-trash-alt"></i>
+            <span class="site-rule-options delete"></span>
           </div>
         </div>
         <div class="site-rule-content">
@@ -115,26 +107,40 @@
                 <th class="site-rule-table-header search">replace</th>
                 <th class="site-rule-table-header replace">with</th>
               </tr>
-              {{# ruleList }}
-              <tr class="site-rule-table-row">
-                <td class="site-rule-table-row search" title="{{ ruleType }}">{{ ruleSearch }}</td>
-                <td class="site-rule-table-row replace" >{{ ruleReplace }}</td>
-                <td class="site-rule-table-row option">
-                  <span class="site-s-r-edit">
-                    <i class="fas fa-edit"></i>
-                  </span>
-                  <span class="site-s-r-delete">
-                    <i class="fas fa-trash-alt"></i>
-                  </span>
-                </td>
-              </tr>
-              {{/ ruleList }}
             </tbody>
           </table>
         </div>
       </div>
-      {{/ rules}}
     </script>
+
+    <script id="site-rule-template" type="text/template">
+      <tr class="site-rule-table-row">
+        <td class="site-rule-table-row search" title="{{ ruleType }}">{{ ruleSearch }}</td>
+        <td class="site-rule-table-row replace" >{{ ruleReplace }}</td>
+        <td class="site-rule-table-row options">
+          <span class="site-rule-table-row option edit" title="Edit this rule."></span>
+          <span class="site-rule-table-row option delete" title="Delete this rule."></span>
+        </td>
+      </tr>
+    </script>
+
+
+    <div class="site-view-footer">
+      <div class="site-icons">
+        <div class="site-icon-wrapper">
+          <span title="Delete all rules." class="site-icon trash"></span>
+        </div>
+        <div class="site-icon-wrapper">
+          <span title="Export your rules." class="site-icon export"></span>
+        </div>
+        <div class="site-icon-wrapper">
+          <span title="Import previously exported rules." class="site-icon import"></span>
+        </div>
+        <div class="site-icon-wrapper">
+          <span title="Add new rule." class="site-icon add"></span>
+        </div>
+      </div>
+    </div>
 
   </body>
   <script src="../js/http-scratchmarks-popup.js"></script>

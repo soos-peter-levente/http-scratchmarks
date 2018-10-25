@@ -78,20 +78,24 @@
     };
 
     return (message) => {
-      var response = bg[message.label].bind(bg).apply(null, message.args);
-      // keep promises on the background
-      if (typeof response.then === "function")
-        response.then(response => respond(message, response));
-      else respond(message, response);
-
+      try {
+        var response = bg[message.label].bind(bg).apply(null, message.args);
+        // keep promises on the background
+        if (typeof response.then === "function")
+          response.then(response => respond(message, response));
+        else respond(message, response);
+      } catch (e) {
+        throw new Error("Undefined Response Error! '" + message.label + "' did not produce a value." );
+      }
     };
 
   }
 
+
   ; // const defs end
 
-  //bg.reinitialize();
-
+  //bg.clear();
+  
   listenForConnections();
 
 })();

@@ -2,7 +2,17 @@ body {
   font-family: sans-serif;
   max-width: 350px;
   min-width: 350px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100%;
+  margin: 0px;
 }
+@media screen and ( min-height: 550px ) {
+  body {
+    overflow-y: visible;
+  }
+}
+
 input {
   border: none;
   border-bottom: 1px solid gray;
@@ -23,6 +33,7 @@ label {
 }
 .main-view-container {
   display: initial;
+  max-height: 550px;
 }
 .edit-view-container {
   display: none;
@@ -49,7 +60,8 @@ label {
   padding-left: 15px;
 }
 #main {
-  padding: 15px 0px 0px 15px;
+  padding: 15px 5px 15px 15px;
+  margin-bottom: 75px;
 }
 #main-title {
   display: flex;
@@ -71,11 +83,6 @@ label {
 .site-name:hover {
   color: green;
 }
-.edit-rule-buttons,
-.site-rule-buttons {
-  display: block;
-  padding: 15px 15px 40px 0px;
-} 
 #edit-save-rule {
   /*padding: 15px 0px 15px 0px;*/
   float: right;
@@ -84,10 +91,14 @@ label {
   float: left;
 }
 #site-add-rule{
-  float: right;
+  margin: auto;
+  width: 25%;
 }
-#site-edit-rule {
-  float:left;
+.site-rule-buttons {
+  padding-bottom: 20px;
+}
+.edit-rule-buttons {
+  height: 50px;
 }
 button {
   cursor: pointer;
@@ -103,11 +114,110 @@ button:disabled {
   color: white;
   background-color: silver;
 }
+
 .site-view-rules {
-  padding-top: 25px;
-  padding-bottom: 25px;
+  padding-top: 15px;
+  padding-right: 15px;
+}
+.site-rule-wrapper {
+  box-shadow: 0px 0px 2px 0px #88888888;
+  margin-bottom: 15px;
+  transition: box-shadow 0.2s;
+  padding: 0px;
+}
+.site-rule-wrapper:hover .site-rule-options {
+  opacity: 100;
+  visibility: visible;
+}
+.site-rule-wrapper:hover {
+  box-shadow: 0px 0px 5px 0px #88888888;
+}
+/* Well.
+https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-out-transition-which-uses-max-height-transitio
+*/
+.site-rule-content {
+  max-height: 0;
+  transition: max-height 0.5s cubic-bezier(0,1,0,1);
+  transition-delay: 0s;
+  background-color: white;
+  overflow: hidden;
+}
+.site-rule-content.active {
+  transition: max-height 1s ease-in-out;
+  max-height: 2500px;
 }
 
+/* ICON ROW */
+
+.site-view-footer {
+  box-shadow: 0px 0px 2px 1px #88888888;
+  position: fixed;
+  bottom: 0px;
+  padding-top: 15px;
+  padding-bottom: 0px;
+  background-color: white;
+  margin: 0px;
+  width: 100%;
+}
+
+.site-icons {
+  display: flex;
+  margin-right: 15px;
+  padding-bottom: 15px;
+  padding-top: 20px;
+  padding-left: 15px;
+}
+.site-icon-wrapper {
+  height: auto;
+}
+.site-icon {
+  background-color: grey;
+  transition: background-color 0.4s;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.site-icon:hover {
+  background-color: black;
+}
+.site-icon.trash {
+  mask-image: url(../icons/trash-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 12px;
+  margin: 25px;
+}
+.site-icon.export {
+  mask-image: url(../icons/file-export-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 15px;
+  margin: 25px;
+  padding: 15px 15px 2px 15px;
+  padding-top: 11px;
+}
+.site-icon.import {
+  mask-image: url(../icons/file-import-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 15px;
+  margin: 25px;
+  padding: 15px 15px 2px 15px;
+  padding-top: 11px;
+}
+.site-icon.add {
+  mask-image: url(../icons/plus-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 14px;
+  margin: 25px;
+}
+
+.site-rule-options {
+  opacity: 0;
+  transition: opacity 0.5s;
+  cursor: pointer;
+  float: right;
+  font-size: 16px;
+  width: 11%;
+  text-align: right;
+}
 
 /* RULE ACCORDION */
 .site-rule-accordion-wrapper {
@@ -115,7 +225,7 @@ button:disabled {
   width: 99%;
 }
 .site-rule-path {
-  background-color: #eee;
+  background-color: transparent;
   color: #444;
   cursor: pointer;
   width: 100%;
@@ -123,26 +233,25 @@ button:disabled {
   text-align: left;
   outline: none;
   font-size: 15px;
-  transition: 0.4s;
   width: 87%;
   display: flex;
   padding-right: 10px;
 }
-.site-rule-options {
-  cursor: pointer;
-  float: right;
-  font-size: 16px;
-  width: 11%;
-  text-align: right;
-  padding-top: 10px;
-  padding-right: 12px;
+.site-rule-options .delete {
+  background: url(../icons/trash-alt-regular.svg);
+  background-repeat: no-repeat;
+  height: 0;
+  width: 0;
+  padding: 10px;
+  margin-right: 5px;
+  margin-top: 10px;
 }
 .site-rule-path:before {
   content: "▶";
   float: left;
   padding-right: 10px;
 }
-.site-rule-path.active:before {
+.site-rule-wrapper.active .site-rule-path:before {
   content: "▼"; 
 }
 .site-rule-path-text {
@@ -155,13 +264,7 @@ button:disabled {
   float: right;
 }
 .site-rule-open, .site-rule-path:hover {
-  background-color: #ccc;
-}
-.site-rule-content {
-  padding: 0 18px;
-  display: none;
-  background-color: white;
-  overflow: hidden;
+  /*background-color: #ccc;*/
 }
 
 
@@ -183,12 +286,27 @@ button:disabled {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.site-rule-table-row.option {
+.site-rule-table-row.options {
   color: grey;
   font-size: initial;
-  padding-right: 15px;
   max-width: 18%;
   min-width: 18%;
+}
+.site-rule-table-row.options * {
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.site-rule-table-row.option.delete {
+  background: url(../icons/trash-alt-regular.svg);
+  background-repeat: no-repeat;
+  padding: 8px 8px 8px 8px;
+}
+.site-rule-table-row.option.edit {
+  background: url(../icons/edit-regular.svg);
+  background-repeat: no-repeat;
+  padding: 8px 10px 10px 10px;
+  margin-right: 5px;
 }
 .site-rule-table .search,.site-rule-table .replace {
   text-align: left;
@@ -201,7 +319,7 @@ button:disabled {
 /* TOGGLE */
 #main-status {
   margin-left: auto;
-  padding: 15px 0px 0px 30px;
+  padding: 15px 5px 0px 30px;
 }
 
 #main-toggle, #site-toggle {

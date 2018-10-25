@@ -1,23 +1,25 @@
 /* 2018 Soos Peter Levente. Licensed under the MIT license.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE. */
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 (function () {
 
@@ -67,7 +69,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
    * Send a message with `label' and `args' to the background. Wrapper
    * for the messaging API of the Port object.
    * @param {string} label - name of the call to be invoked by the background.
-   * @param {array} args - array of arguments to be passed to the invocation
+   * @param {array} args - array of arguments to be passed to the invocation.
    */
   send = (label, ...args) => {
     console.log("PU -> BG:", { label: label, args: args });
@@ -96,10 +98,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 
   /**
-   * Message background to `clear' the contents of the local
-   * storage. All settings and saved sites/paths/rules are lost.
+   * Message background to `flip' the extension switch (global).
    */
-  clear = () => send("clear"),
+  flip = () => send("flip"),
+
+
+  /**
+   * Message background to `toggle' site.
+   */
+  toggle = site => send("toggle", site),
 
 
   /**
@@ -111,96 +118,41 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 
   /**
-   * Message background to `toggle' the extension (global).
+   * Message background to `clear' the contents of the local
+   * storage. All settings and saved sites/paths/rules are lost.
    */
-  toggle = () => send("toggle"),
+  clear = () => send("clear"),
 
 
   /**
-   * Messagae background to `toggle' site status.
+   * Message background to respond with a \"getRule\" labeled message
+   * that contains all rules associated with `site'.
+   * @param {string} site - the domain for which to get rules.
    */
-  toggleSite = site => send("toggleSite", site),
-
-
-  /**
-   * Message background to send all `site'-related data in the payload
-   * of a labeled aynchronous message.
-   * @param {string} site - the domain for which to load the data.
-   * @returns {object} - {} or site data (state, paths & rules)
-   */
-  getSite = site => send("getSite"),
-
-
-  /**
-   * Message background to send data for each `path' associated with
-   * `site' in the payload of a labeled asynchronous message.
-   * @param {string} site - the domain for which to load the path(s).
-   * @param {array} paths - the path(s) to load.
-   * @returns {object} - {} or paths
-   */
-  getPath = (site, paths) => send("getPath", site, paths),
-
-
-  /**
-   * Message background to send all rules for each of the `paths'
-   * associated with `site'. in the payload of a labeled asynchronous
-   * message.
-   * @param {string} site - the domain for which to get paths.
-   * @param {object / array} paths - path or array of paths.
-   */
-  getRule = (site, paths) => send("getRule", site, paths),
-
-
-  /**
-   * Message background to set site to `status' (disable / enable it).
-   * @param {string} site - the domain to set
-   * @param {boolean} status - enabled / disabled
-   */
-  setSite = (site, status) => send("setSite", site, status),
-
-
-  /**
-   * Message background to set/update each `path' for `site'.
-   * @param {string} site - the domain for which to set `paths'
-   * @param {object / array} paths - a path or an array of paths
-   */
-  setPath = (site, paths) => send("setPath", site, paths),
+  get = site => send("get", site),
 
 
   /**
    * Message the background to set/update `rules' for each  of `paths'.
    * @param {string} site - the domain to associate the path & rules to.
-   * @param {object / array} paths - a path object or array of path objects
-   * @param {object / array} rules - a rule object or array of rule objects
+   * @param {object} rule - a rule to set
    */
-  setRule = (site, paths, rules) => send("setRule", site, paths, rules),
+  put = rule => send("put", rule),
 
 
   /**
-   * Message the background to delete from storage `site' and all
-   * associated paths and rules.
-   * @param {string} site - the domain to delete
+   * Message the background to delete site, path or rule. The scope of
+   * deletion is specified by the last defined parameter. E.g. `site'
+   * alone will delete all paths and searches associated with
+   * `site'. An additional `path' parameter will cause that ID to be
+   * removed only. Furthermore, passing a valid `rule' will cause that
+   * rule to be removed from `path'.
+   *
+   * @param {string} site - the domain from which to delete
+   * @param {object} path - the path to delete from `site'
+   * @param {object} rule - the rule to delete from `path'
    */
-  delSite = site => send("delSite", site),
-
-
-  /**
-   * Message the background to delete from storage each of `paths', if
-   * associated with `site'.
-   * @param {string} site - the domain from which to delete paths.
-   * @param {object / array} paths - the path(s) to delete.
-   */
-  delPath = (site, paths) => send("delPath", site, paths),
-
-
-  /**
-   * Message the background to delete from storage each of `rules'
-   * from each of `paths' if associated with `site'.
-   * @param {string} site - the domain from which to delete rule(s).
-   * @param {object / array} paths - the path(s) from which to delete rule(s)
-   * @param {object / array} rules - the rule(s) to delete
-   */
-  delRule = (site, paths, rules) => send("delPath", site, paths, rules),
+  del = (site, path, rule) => send("del", site, path, rule),
 
 
   /**
@@ -209,26 +161,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
    */
   dispatch = response => {
     switch (response.label) {
-      case "getSite":
-      case "getPath":
-      case "getRule":    // redraw with payload
-      case "setSite":
-      case "setPath":
-      case "setRule":
+        // redraw with payload
+      case "get":
+      case "put":
         renderData(response.payload);
         break;;
-      case "delSite":
-      case "delPath":    // don't redraw
-      case "delRule":
+        // don't redraw
+      case "del":
         /* The UI event handlers should take care of visual removal of
          * elements. Deletion in storage has already happened by the
          * time of dispatch, so this case is superfluous, but it's
          * listed explicitly until behavior is sorted out.
          */
-        deleteData(response.payload);
         break;;
       case "clear":
-        voidTheList();   // special case
+        voidList();   // special case
         break;;
       case "start":
       case "stop":
@@ -236,7 +183,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
       case "state":
         setSlider(mainToggle, response.payload);
         break;;
-      case "toggleSite":
+      case "flip":
         setSlider(siteToggle, response.payload);
         break;;
       default:
@@ -264,7 +211,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
   siteUseText = $("#site-status .toggle-text"),
   siteName = $(".site-name"),
-
+  
   addButton = $("#site-add-rule button"),
   editButton = $("#site-edit-rule button"),
   saveButton = $("#edit-save-rule button"),
@@ -273,9 +220,18 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
   pathDropdown = $(".edit-path-dropdown"),
   searchDropdown = $(".edit-rule-dropdown"),
 
+  pathID = $("#path-id"),
+  searchID = $("#rule-id"),
+  
   pathInput = $("#edit-domain-path"),
   searchInput = $("#edit-search"),
   replaceInput = $("#edit-replace"),
+
+
+  // templates
+  nameTemplate = $("#site-name-template").html(),
+  pathTemplate = $("#site-path-template").html(),
+  ruleTemplate = $("#site-rule-template").html(),
 
 
   setSlider = (slider, status) => slider.attr("checked", status),
@@ -287,15 +243,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
   showEdit = () => { mainView.hide(); editView.show(); },
 
   /* We'll assume that we only ever want to edit rules for the current
-     tab. Though this might not always be the case, anything more
-     involved is too much for such a lean popup anyway. A domain
-     selector dropdown below the main toggle could also work. */
+   * tab. Though this might not always be the case, anything more
+   * involved is too much for such a lean popup anyway. A domain
+   * selector dropdown below the main toggle could also work.
+   */
 
-  getCurrentURL = callback =>
+  withURL = callback =>
     browser.tabs.query({ currentWindow: true, active: true })
     .then(tabs => new URL(tabs[0].url))
     .then(url  => callback ? callback(url) : url),
-
 
 
   ///////////////////////
@@ -303,60 +259,107 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
   ///////////////////////
 
 
-  saveRule = event => {
-    console.log("save rule:", inputToObject());
-  },
-
-
-  addRule = event => {
+  add = event => {
     editTitle.text("Add new rule");
     showEdit();
     pathInput.focus();
   },
 
 
-  addDomainRule = event => {
+  addDomain = event => {
     editTitle.text("Add new rule");
-    getCurrentURL(url => pathInput.val(url.host));
+    withURL(url => pathInput.val(url.host));
     showEdit();
     searchInput.focus();
   },
 
 
-  editRule = event => {
-    editTitle.text("Edit rule");
+  edit = (rule, path) => {
+    addRuleAndPathToDOM(rule, path);
     showEdit();
+    pathInput.focus().select();
   },
 
 
-  stopEdit = event => {
-    nullifyInputValues();
+  cancel = event => {
+    voidInput();
     showMain();
+  },
+
+
+  voidInput = () => {
+    pathInput.val("");
+    searchInput.val("");
+    replaceInput.val("");
+    searchID.attr("data-rule-id", "");
+    pathID.attr("data-path-id", "");
+  },
+
+
+  voidList = () => siteRules.html(""),
+
+
+  addRuleAndPathToDOM = (rule, path) => {
+    pathInput.val(path.pathName);
+    pathDropdown.val(path.pathType);
+    pathID.attr("data-path-id", path.pathID);
+
+    searchInput.val(rule.ruleSearch);
+    replaceInput.val(rule.ruleReplace);
+    searchDropdown.val(rule.ruleType);
+    searchID.attr("data-rule-id", rule.ruleID);
   },
 
 
   // function keyword to bind `this'
   toggleContents = function (event) {
-    $(this).siblings(".site-rule-content").toggle();
+    $(this).parent().siblings(".site-rule-content").toggleClass("active")
+      .parents(".site-rule-wrapper").toggleClass("active");
+  },
+
+  ///////////////////////
+  // BACKGROUND EVENTS //
+  ///////////////////////
+
+
+
+  save = event =>
+    withURL(url => {
+      put({
+        site: url.host,
+        path: {
+          //pathID: pathID.attr("data-path-id"),
+          pathType: pathDropdown.val(),
+          pathName: pathInput.val(),
+        },
+        rule: {
+          //ruleID: searchID.attr("data-rule-id"),
+          ruleType: searchDropdown.val(),
+          search: searchInput.val(),
+          replace: replaceInput.val()
+        }
+      });
+      voidInput();
+      showMain();
+    }),
+
+
+  deletePath = (rule, icon) => {
+    withURL(url => del(url.host, rule.ruleID));
+    $(icon).parents(".site-rule-wrapper").html("");
   },
 
 
-  deleteThisRule = function (event) {
-    // we could be a bit more forgiving than this.
-    $(this).closest(".site-rule-wrapper").remove();
+  deleteRule = (rule, icon) => {
+    withURL(url => del(url.host, rule.pathID, ));
+    $(icon).parents("tr.site-rule-table-row").html("");
   },
 
 
-  editThisRule = function (event) {
-    console.log("Edit the rule: ", $(this));
-  },
+  toggleSite = () => {},
 
 
-  deleteData = siteData => console.log("deleting data:", siteData),
-
-
-  voidTheList = () => siteRules.html(""),
-
+  toggleMain = () => {},
 
 
   ///////////////
@@ -364,68 +367,49 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
   ///////////////
 
 
+  render = (template, object) =>
+    Mustache.render(template, object),
+
+
   renderData = siteData => {
-
+    voidList();
     renderDomain();
-
     if ($.isEmptyObject(siteData)) return;
-
-    siteRules.html(Mustache.render($("#site-rule-template").html(), siteData));
-
-    $(".site-rule-options").on("click", deleteThisRule);
-    $(".site-rule-accordion-wrapper").on("click", toggleContents);
-    $(".site-s-r-edit").on("click", editThisRule);
-    $(".site-s-r-delete").on("click", deleteThisRule);
-
-    setSlider(siteToggle, (siteData.enabled || true));
+    for (let path of siteData.paths)
+      siteRules.append(renderPath(path));
+    setSlider(siteToggle, (siteData.siteIsEnabled || true));
 
   },
+
 
   renderDomain = () =>
-    getCurrentURL(url => siteUseText.html(
-      Mustache.render($("#site-name-template").html(), { domain: url.host }))
-                  .find(".site-name").on("click", addDomainRule)),
+    withURL(url => siteUseText.html(
+      render(nameTemplate, { domain: url.host }))
+                   .find(".site-name").on("click", addDomain)),
 
 
-  // READING FROM THE DOM
+  renderPath = path => {
+    let pathElement = $(render(pathTemplate, path));
+
+    pathElement.find("button").on("click", toggleContents);
+    pathElement.find(".delete").on("click", event => deletePath(path, event.target));
+
+    let tableElement = pathElement.find("tbody");
 
 
-  // None of them yonder Rule objects.
-  ruleObject = (type, search, replace, enabled) => {
-    return {
-      ruleIsEnabled: (enabled !== undefined) ? enabled : true ,
-      ruleType: type,
-      ruleSearch: search,
-      ruleReplace: replace,
-    };
+
+    for (let rule of path.rules)
+      tableElement.append(renderRule(rule, path));
+
+    return pathElement;
   },
 
 
-  inputToObject = () => {
-    /* Change of heart. User input validation should indeed happen
-     * here, but let's not use non-input DOM as a two-way
-     * thing. Templates only get stuff, they shouldn't give them
-     * back. As for the inputs, we'll only send single rules (brand
-     * new ones or edits) or delete requests, and we'll take
-     * responsibility for sanitization. The background will do all the
-     * merging and deleting. */
-    return {
-      pathIsEnabled: true,
-      pathType: pathDropdown.val(),
-      pathName: pathInput.val(),
-      ruleList: [ ruleObject(
-        searchDropdown.val(),
-        searchInput.val(),
-        replaceInput.val()
-      ) ]
-    };
-  },
-
-
-  nullifyInputValues = () => {
-    pathInput.val("");
-    searchInput.val("");
-    replaceInput.val("");
+  renderRule = (rule, path) => {
+    let ruleElement = $(render(ruleTemplate, rule));
+    ruleElement.find(".delete").on("click", event => deleteRule(rule, path, event.target));
+    ruleElement.find(".edit").on("click", event => edit(rule, path));
+    return ruleElement;
   }
 
 
@@ -438,28 +422,25 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 
   // background messaging
-  mainToggle.on("click", toggle);
+  mainToggle.on("click", toggleMain);
 
 
   siteToggle.on("click", toggleSite);
 
 
-  saveButton.on("click", saveRule);
+  saveButton.on("click", save);
 
   // UI events
-  editButton.on("click", editRule);
+  addButton.on("click", add);
 
 
-  addButton.on("click", addRule);
-
-
-  cancelButton.on("click", stopEdit);
+  cancelButton.on("click", cancel);
 
 
   // make a few calls
-  getCurrentURL(url => {
+  withURL(url => {
     state();
-    getSite(url.host);
+    get(url.host);
     addBackgroundListener();
   });
 
