@@ -1,4 +1,3 @@
-* deletion across all objects
 * edit overwrite
 * store/load extension setings
 * rule filter

@@ -21,15 +21,17 @@
  * SOFTWARE. */
 
 
-"use strict"; const
-
-
-log = prefixLog("PU ");
+"use strict";
 
 
 (function () {
 
-  const 
+
+  const
+
+
+  log = prefixLog("PU "),
+
 
   ////////////////
   // BACKGROUND //
@@ -301,6 +303,7 @@ log = prefixLog("PU ");
 
   addDomain = event => {
     editTitle.text("Add new rule");
+    pathDropdown.val("domain");
     withURL(url => pathInput.val(url.host));
     showEdit();
     searchInput.focus();
@@ -378,7 +381,6 @@ log = prefixLog("PU ");
   ///////////////////////
 
 
-
   save = event =>
     withURL(url => {
       let site = {
@@ -402,14 +404,17 @@ log = prefixLog("PU ");
     }),
 
 
-  deletePath = (rule, icon) => {
-    withURL(url => del(url.host, rule.ruleID));
+  deleteSite = (site, icon) => withURL(url => del({ domain: url.host })),
+
+
+  deletePath = (site, icon) => {
+    withURL(url => del(site));
     $(icon).parents(".site-rule-wrapper").html("");
   },
 
 
-  deleteRule = (rule, icon) => {
-    withURL(url => del(url.host, rule.pathID, ));
+  deleteRule = (site, icon) => {
+    withURL(url => del(site));
     $(icon).parents("tr.site-rule-table-row").html("");
   },
 
@@ -428,6 +433,7 @@ log = prefixLog("PU ");
 
   importData = () => log("Import all rules"),
 
+
   ///////////////
   // RENDERING //
   ///////////////
@@ -437,13 +443,16 @@ log = prefixLog("PU ");
     Mustache.render(template, object),
 
 
-  renderData = siteData => {
+  renderData = site => {
     voidList();
     renderDomain();
-    if ($.isEmptyObject(siteData)) return;
-    for (let path of siteData.paths)
-      siteRules.append(renderPath(path));
-    setSlider(siteToggle, (siteData.siteIsEnabled || true));
+
+    if ($.isEmptyObject(site)) return;
+
+    for (let path of site.paths)
+      siteRules.append(renderPath(path, site));
+
+    setSlider(siteToggle, (site.siteIsEnabled || true));
   },
 
 
@@ -453,26 +462,47 @@ log = prefixLog("PU ");
                    .find(".site-name").on("click", addDomain)),
 
 
-  renderPath = path => {
+  renderPath = (path, site) => {
     let pathElement = $(render(pathTemplate, path));
 
     pathElement.find("button").on("click", toggleContents);
-    pathElement.find(".delete").on("click", event => deletePath(path, event.target));
+    pathElement.find(".delete").on("click", event => {
+      deletePath(makeDeletionTarget(site, path), event.target);
+    });
 
     let tableElement = pathElement.find("tbody");
 
     for (let rule of path.rules)
-      tableElement.append(renderRule(rule, path));
+      tableElement.append(renderRule(rule, path, site));
 
     return pathElement;
   },
 
 
-  renderRule = (rule, path) => {
+  // more of the same
+  renderRule = (rule, path, site) => {
     let ruleElement = $(render(ruleTemplate, rule));
-    ruleElement.find(".delete").on("click", event => deleteRule(rule, path, event.target));
+    ruleElement.find(".delete").on("click", event => {
+      deleteRule(makeDeletionTarget(site, path, rule), event.target);
+    });
     ruleElement.find(".search, .replace").on("click", event => edit(rule, path));
     return ruleElement;
+  },
+
+
+  makeDeletionTarget = (site, path, rule) => {
+    let newPath = {
+      pathType: path.pathType,
+      pathName: path.pathName,
+      isPathEnabled: path.isPathEnabled
+    };
+    let newSite = {
+      domain: site.domain,
+      isSiteEnabled: site.isSiteEnabled
+    };
+    newPath.rules = rule ? [ rule ] : undefined;
+    newSite.paths = newPath ? [ newPath ] : undefined;
+    return newSite;
   },
 
 
@@ -503,7 +533,7 @@ log = prefixLog("PU ");
   onClickOrEnter(addNewIcon, add);
 
 
-  onClickOrEnter(deleteIcon, deleteAll);
+  onClickOrEnter(deleteIcon, deleteSite);
 
 
   onClickOrEnter(exportIcon, exportData);

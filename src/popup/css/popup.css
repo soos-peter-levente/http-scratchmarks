@@ -365,7 +365,13 @@ button::-moz-focus-inner {
   border-spacing: 0px;
   text-align: center;
   width: 100%;
-  padding-top: 15px;
+}
+.site-rule-table-cell.replace:before {
+  background-color: darkgray;
+  mask-image: url(../icons/arrow-right-solid.svg);
+  mask-repeat: no-repeat;
+  padding-right: 30px;
+  content: "";
 }
 .site-rule-table-cell.search,
 .site-rule-table-header.search {
@@ -403,6 +409,7 @@ button::-moz-focus-inner {
   mask-image: url(../icons/times-solid.svg);
   mask-repeat: no-repeat;
   padding: 2px 6px 6px 6px;
+  margin-left: 6px;
 }
 .site-rule-table-row:nth-child(even) {
   background-color: #F5F5F5;

@@ -179,8 +179,21 @@ const BackgroundService = (function () {
 
 
     del: function (site) {
-      log("Mock-removing", site, "from storage");
+      if (site.paths !== undefined) {
+        return this.get(site.domain)
+          .then(stored => {
+            let result = new Site(stored);
+            for (let i = 0; i < site.paths.length; i++) {
+              result = result.delPath(site.paths[i]);
+            };
+            return result;
+          })
+          .then(result => storage.put(site.domain, result));
+      } else {
+        return storage.put(site.domain, undefined);
+      }
     },
+
 
   };
 

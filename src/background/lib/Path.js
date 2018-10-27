@@ -104,7 +104,7 @@ const Path = (function () {
         log("Pushing rule.");
         this.rules.push(new Rule(rule));
       }
-      return this.rules;
+      return this;
     },
 
 
@@ -130,7 +130,11 @@ const Path = (function () {
 
 
     delRule: function (rule) {
-
+      let i = this.findRule(rule);
+      if (Number.isInteger(i)) {
+        this.rules.splice(i, 1);
+      }
+      return this;
     }
 
   };

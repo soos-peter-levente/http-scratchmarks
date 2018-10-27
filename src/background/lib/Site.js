@@ -36,7 +36,8 @@ const Site = (function () {
   Site = function (object) {
     this.domain = object.domain;
     this.siteIsEnabled = object.siteIsEnabled;
-    this.paths = (object.paths || []).map(rule => new Path(rule)) || [];
+    this.paths = (object.paths || [])
+      .map(rule => new Path(rule)) || [];
   };
 
 
@@ -86,7 +87,6 @@ const Site = (function () {
 
 
     merge: function (site) {
-      log("Merging site", site);
       this.domain = site.domain;
       this.siteIsEnabled = site.siteIsEnabled;
       for (let i = 0; i < site.paths.length; i++) {
@@ -134,9 +134,20 @@ const Site = (function () {
 
 
     delPath: function (path) {
-
+      let i = this.findPath(path);
+      if (Number.isInteger(i)) {
+        if (path.rules !== undefined) {
+          let result = new Path(this.paths[i]);
+          for (let j = 0; j < path.rules.length; j++) {
+            result.delRule(path.rules[j]);
+          }
+          this.paths[i] = result;
+        } else {
+          this.paths.splice(i, 1);
+        }
+      }
+      return this;
     },
-
   };
 
 
