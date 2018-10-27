@@ -132,7 +132,10 @@ const Path = (function () {
     delRule: function (rule) {
       let i = this.findRule(rule);
       if (Number.isInteger(i)) {
+        log("Rules before deletion", this.rules);
+        log("Deleting rule", rule);
         this.rules.splice(i, 1);
+        log("Rules after deletion", this.rules);
       }
       return this;
     }

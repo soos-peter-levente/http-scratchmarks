@@ -37,7 +37,6 @@ label {
   padding-right: 15px;
 }
 .main-view-container {
-  display: none;
   max-height: 550px;
 }
 .edit-view-container {
@@ -361,6 +360,20 @@ button::-moz-focus-inner {
 }
 .site-rule-open, .site-rule-path:hover {
   /*background-color: #ccc;*/
+}
+.info {
+  color:darkgray;
+}
+.info.empty-list {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.info.empty-list:before {
+  content: "(";
+}
+.info.empty-list:after {
+  content: ")";
 }
 
 /* TABLE */

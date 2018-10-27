@@ -186,9 +186,8 @@ const BackgroundService = (function () {
             for (let i = 0; i < site.paths.length; i++) {
               result = result.delPath(site.paths[i]);
             };
-            return result;
-          })
-          .then(result => storage.put(site.domain, result));
+            return storage.put(site.domain, result);
+          });
       } else {
         return storage.put(site.domain, undefined);
       }

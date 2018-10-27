@@ -247,6 +247,7 @@
   nameTemplate = $("#site-name-template").html(),
   pathTemplate = $("#site-path-template").html(),
   ruleTemplate = $("#site-rule-template").html(),
+  emptyListTemplate = $("#empty-list-template").html(),
 
 
   setSlider = (slider, status) => slider.attr("checked", status),
@@ -309,12 +310,34 @@
     searchInput.focus();
   },
 
-
-  edit = (rule, path) => {
+  /* This is not useful: if the user closes the popup during editing,
+   * the original rule is lost. `put' should be capable of looking up
+   * previous rules and updating them. It seems like this will require
+   * either a second parameter in the API, which is a site object or a
+   * unique identifier to compare. */
+  edit = (site, path, rule, element) => {
     editTitle.text("Edit rule");
-    addRuleAndPathToDOM(rule, path);
+    addPathAndRuleToDOM(path, rule);
+    deleteRule(makeSiteObject(site, path, rule));
     showEdit();
     pathInput.focus().select();
+
+    saveIcon.off();
+    cancelIcon.off();
+
+    onClickOrEnter(saveIcon, event => {
+      save();
+      saveIcon.off();
+      onClickOrEnter(saveIcon, save);
+    });
+
+    // put the previous rule back;
+    onClickOrEnter(cancelIcon, event => {
+      put(makeSiteObject(site,path,rule));
+      cancelIcon.off();
+      onClickOrEnter(cancelIcon, cancel);
+      showMain();
+    });
   },
 
 
@@ -342,18 +365,18 @@
   },
 
 
-  voidList = () => siteRules.html(""),
+  voidList = () => siteRules.html(renderEmptyList()),
 
 
-  addRuleAndPathToDOM = (rule, path) => {
+  addPathAndRuleToDOM = (path, rule) => {
     pathInput.val(path.pathName);
     pathDropdown.val(path.pathType);
-    pathID.attr("data-path-id", path.pathID);
+    //pathID.attr("data-path-id", path.pathID);
 
     searchInput.val(rule.ruleSearch);
     replaceInput.val(rule.ruleReplace);
     searchDropdown.val(rule.ruleType);
-    searchID.attr("data-rule-id", rule.ruleID);
+    //searchID.attr("data-rule-id", rule.ruleID);
   },
 
 
@@ -404,12 +427,18 @@
     }),
 
 
-  deleteSite = (site, icon) => withURL(url => del({ domain: url.host })),
+  deleteSite = (site, icon) => {
+    withURL(url => del({ domain: url.host }));
+    renderEmptyList();
+  },
 
 
   deletePath = (site, icon) => {
     withURL(url => del(site));
-    $(icon).parents(".site-rule-wrapper").html("");
+    $(icon).parents(".site-rule-wrapper").remove();
+    if ($(".site-rule-wrapper").length === 0) {
+      renderEmptyList();
+    }
   },
 
 
@@ -419,7 +448,10 @@
   },
 
 
-  deleteAll = () => clear(),
+  deleteAll = () => {
+    clear();
+    renderEmptyList();
+  },
 
 
   toggleSite = () => {},
@@ -434,6 +466,22 @@
   importData = () => log("Import all rules"),
 
 
+  makeSiteObject = (site, path, rule) => {
+    let newPath = {
+      pathType: path.pathType,
+      pathName: path.pathName,
+      isPathEnabled: path.isPathEnabled
+    };
+    let newSite = {
+      domain: site.domain,
+      isSiteEnabled: site.isSiteEnabled
+    };
+    newPath.rules = rule ? [ rule ] : undefined;
+    newSite.paths = newPath ? [ newPath ] : undefined;
+    return newSite;
+  },
+
+
   ///////////////
   // RENDERING //
   ///////////////
@@ -445,21 +493,26 @@
 
   renderData = site => {
     voidList();
-    renderDomain();
 
-    if ($.isEmptyObject(site)) return;
+    withURL(url => renderDomain(url.host));
 
+    if (site.paths === undefined) {
+      renderEmptyList();
+      return;
+    }
+
+    if (site.paths.length > 0) {
     for (let path of site.paths)
       siteRules.append(renderPath(path, site));
+    }
 
     setSlider(siteToggle, (site.siteIsEnabled || true));
   },
 
 
-  renderDomain = () =>
-    withURL(url => siteUseText.html(
-      render(nameTemplate, { domain: url.host }))
-                   .find(".site-name").on("click", addDomain)),
+  renderDomain = (domain) =>
+      siteUseText.html(render(nameTemplate, { domain: domain }))
+      .find(".site-name").on("click", addDomain),
 
 
   renderPath = (path, site) => {
@@ -467,7 +520,7 @@
 
     pathElement.find("button").on("click", toggleContents);
     pathElement.find(".delete").on("click", event => {
-      deletePath(makeDeletionTarget(site, path), event.target);
+      deletePath(makeSiteObject(site, path), event.target);
     });
 
     let tableElement = pathElement.find("tbody");
@@ -483,27 +536,16 @@
   renderRule = (rule, path, site) => {
     let ruleElement = $(render(ruleTemplate, rule));
     ruleElement.find(".delete").on("click", event => {
-      deleteRule(makeDeletionTarget(site, path, rule), event.target);
+      deleteRule(makeSiteObject(site, path, rule), event.target);
     });
-    ruleElement.find(".search, .replace").on("click", event => edit(rule, path));
+    ruleElement.find(".search, .replace").on("click", event => {
+      edit(site, path, rule, event.target);
+    });
     return ruleElement;
   },
 
 
-  makeDeletionTarget = (site, path, rule) => {
-    let newPath = {
-      pathType: path.pathType,
-      pathName: path.pathName,
-      isPathEnabled: path.isPathEnabled
-    };
-    let newSite = {
-      domain: site.domain,
-      isSiteEnabled: site.isSiteEnabled
-    };
-    newPath.rules = rule ? [ rule ] : undefined;
-    newSite.paths = newPath ? [ newPath ] : undefined;
-    return newSite;
-  },
+  renderEmptyList = () => siteRules.html(render(emptyListTemplate, {})),
 
 
   initialize = () => {
