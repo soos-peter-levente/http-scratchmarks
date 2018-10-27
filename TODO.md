@@ -1,6 +1,7 @@
 * edit overwrite
 * rule filter
 * search & replace
+* input validation
 * store/load extension setings
 * site dropdown/search field in main
 * import/export
