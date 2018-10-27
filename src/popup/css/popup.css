@@ -336,13 +336,16 @@ button::-moz-focus-inner {
   content: ".*";
   color: darkgray;
 }
+.site-rule-path-text.regex {
+  color: cornflowerblue;
+}
 .site-rule-path-text.regex:before {
   content: "/";
-  color: darkgray;
+  color: cornflowerblue;
 }
 .site-rule-path-text.regex:after {
   content: "/";
-  color: darkgray;
+  color: cornflowerblue;
 }
 .site-rule-path-text.fixpath:before {
   content: "^";
@@ -376,6 +379,17 @@ button::-moz-focus-inner {
 .site-rule-table-cell.search,
 .site-rule-table-header.search {
   padding-left: 30px;
+}
+.site-rule-table-cell.search.regex {
+  color: cornflowerblue;
+}
+.site-rule-table-cell.search.regex:before {
+  color: cornflowerblue;
+  content: "/";
+}
+.site-rule-table-cell.search.regex:after {
+  content: "/";
+  color: cornflowerblue;
 }
 .site-rule-table-header-row {
   font-size: 10px;
