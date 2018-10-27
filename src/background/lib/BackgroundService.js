@@ -21,13 +21,14 @@
  * SOFTWARE. */
 
 
+"use strict";
+
+
 const BackgroundService = (function () {
 
+  const
 
-  "use strict"; const
-
-
-  /* The BackgroundService has two purposes: first, it snoops on HTTP
+    /* The BackgroundService has two purposes: first, it snoops on HTTP
      responses and alters them via a `processor' (a function that
      takes a Request object as argument and which is passed during
      instantiation, so it is rather loosely coupled). Secondly, it
@@ -40,92 +41,23 @@ const BackgroundService = (function () {
      Big a Whoop to let the popup use a single tunnel. */
 
 
-  mergePath = function (pathList, newData) {
-
-      let
-      newPathList,
-
-      newRule = {
-          ruleIsEnabled: true,
-          ruleSearch: newData.rule.search,
-          ruleReplace: newData.rule.replace,
-          ruleType: newData.rule.ruleType
-      },
-
-      // new path & rule
-      newPath = {
-        pathIsEnabled: true,
-        pathType: newData.path.pathType,
-        pathName: newData.path.pathName,
-        rules: [ ]
-      },
-
-      existingPathIndex,
-      existingRuleIndex
-
-      ;
-
-      console.log("Merging", newData, "into", pathList);
-      console.log("Created new rule", newRule);
-      console.log("Created new path", newPath);
-
-      // if empty, create
-      if (isEmptyObject(pathList)) {
-        console.log("There are no rules associated with domain.");
-        pathList = {
-          siteIsEnabled: true,
-          paths:  []
-        };
-      }
-
-      console.log(pathList);
-
-      console.log("Checking to see if", pathList.paths, "contains", newPath);
-
-      for (let i = 0; i < pathList.paths.length; i++){
-        console.log("i is", i);
-        if (newPath.pathName === pathList.paths[i].pathName &&
-            newPath.pathType === pathList.paths[i].pathType ){
-          existingPathIndex = i;
-          console.log("Found similar path at index",i);
-          break;
-        }
-      }
+  webRequestSettings = {
+    urls: [
+      "<all_urls>"
+    ],
+    types: [
+      "main_frame",
+      "xmlhttprequest",
+      "stylesheet",
+      "script"
+    ]
+  },
 
 
-      if (existingPathIndex !== undefined) {
-        var rulesForPath = pathList.paths[existingPathIndex].rules;
-        console.log("Checking to see if", rulesForPath, "contains", newRule);
-        for (let i = 0; i < rulesForPath.length; i++) {
-          let rule = rulesForPath[i];
-          if (rule.ruleType === newRule.ruleType &&
-              rule.ruleSearch === newRule.ruleSearch &&
-              rule.ruleReplace === newRule.ruleReplace ) {
-            existingRuleIndex = i;
-            console.log("Found similar path at index", i);
-          }
-        };
-      }
+  storage = new Storage(),
 
-      console.log("Existing path index:", existingPathIndex);
-      console.log("Existing rule index:", existingRuleIndex);
 
-      if (existingPathIndex !== undefined &&
-          existingRuleIndex !== undefined) {
-        console.log("BG: PATH+RULE exist. Return paths unchanged.");
-      } else if (existingPathIndex !== undefined) {
-        console.log("BG: PATH exists. Merging new rule.");
-        pathList.paths[existingPathIndex].rules.push(newRule);
-      } else {
-        console.log("BG: Pushing new path & rule.");
-        newPath.rules.push(newRule);
-        pathList.paths.push(newPath);
-      }
-
-      console.log("Returning", pathList);
-      return pathList;
-    },
-
+  log = prefixLog("BG "),
 
 
   /////////
@@ -133,29 +65,63 @@ const BackgroundService = (function () {
   /////////
 
 
-
-  BackgroundService = function (webRequestOptions, processor) {
+  BackgroundService = function (processor) {
     // First, load all settings
     this.settings = {
       enabled: true,
-      request: webRequestOptions
+      request: webRequestSettings
     };
     /* `processor' or a dolittle function. Remind you of anything? */
     this.processor = (processor) ? processor : ()=>{};
+    this.responder = null;
+    this.port = null;
 
     // Start listening depending on extension state.
     if (this.settings.enabled) this.start();
-  },
-
-  isEmptyObject = obj =>
-    Object.keys(obj).length === 0 && obj.constructor === Object,
-
-
-  storage = new Storage();
-
+  };
 
 
   BackgroundService.prototype = {
+
+    listen: function () {
+
+      browser.runtime.onConnect.addListener(
+        port  => {
+          this.port = port;
+          this.responder = makeResponder(port).bind(this);
+          this.port.onMessage.addListener(this.responder);
+        });
+
+
+      const makeResponder = (port) => {
+        const respond = (message, response) => {
+          log("sends to PU: ", { label: message.label, payload: response});
+          port.postMessage({
+            label: message.label,
+            payload: response
+          });
+        };
+        return (message) => {
+          try {
+            var response = this[message.label].bind(this).apply(null, message.args);
+            // keep promises on the background
+            if (typeof response.then === "function")
+              response.then(response => respond(message, response));
+            else respond(message, response);
+          } catch (e) {
+            throw new Error("Undefined Response Error! '" + message.label + "' did not produce a value." );
+          }
+        };
+
+      };
+
+    },
+
+
+    ignore: function () {
+      this.port.onMessage.removeListener(this.responder);
+    },
+
 
     start: function () {
       browser.webRequest.onBeforeRequest.addListener(
@@ -193,8 +159,8 @@ const BackgroundService = (function () {
 
       return this.get(site).then(stored => {
         stored.siteIsEnabled = !stored.siteIsEnabled;
-        return this.put(site, stored);
-        });
+        return this.put(stored);
+      });
 
     },
 
@@ -204,21 +170,23 @@ const BackgroundService = (function () {
     },
 
 
-    put: function (rule) {
-      return this.get(rule.site)
-        .then(stored => mergePath(stored, rule))
-        .then(result => storage.put(rule.site, result)
-              .then(()=> this.get(rule.site)));
+    put: function (site) {
+      return this.get(site.domain)
+        .then(stored => new Site(stored).merge(new Site(site)))
+        .then(result => storage.put(site.domain, result)
+              .then(()=> this.get(site.domain)));
     },
 
 
-    del: function (site, pathID, ruleID) {
-      console.log("Mock-removing", site, "from storage");
+    del: function (site) {
+      log("Mock-removing", site, "from storage");
     },
 
   };
 
 
+
   return BackgroundService;
+
 
 })();
