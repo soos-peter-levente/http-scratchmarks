@@ -2,7 +2,7 @@
 * rule filter
 * search & replace
 * input validation
-* store/load extension setings
+* store/load extension settings
 * site dropdown/search field in main
 * import/export
 * rule search
