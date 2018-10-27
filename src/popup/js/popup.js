@@ -21,9 +21,15 @@
  * SOFTWARE. */
 
 
+"use strict"; const
+
+
+log = prefixLog("PU ");
+
+
 (function () {
 
-  "use strict"; const // functional yay!
+  const 
 
   ////////////////
   // BACKGROUND //
@@ -56,6 +62,7 @@
   // API calls are made through this port (in `send')
   background = browser.runtime.connect( { name: "background" } ),
 
+
   // hook into  responses
   addBackgroundListener = () =>
     background.onMessage.addListener(dispatch),
@@ -72,7 +79,7 @@
    * @param {array} args - array of arguments to be passed to the invocation.
    */
   send = (label, ...args) => {
-    console.log("PU -> BG:", { label: label, args: args });
+    log("sends to BG: ", { label: label, args: args });
     background.postMessage({
       label: label,
       args: args || []
@@ -125,7 +132,7 @@
 
 
   /**
-   * Message background to respond with a \"getRule\" labeled message
+   * Message background to respond with a \"get\" labeled message
    * that contains all rules associated with `site'.
    * @param {string} site - the domain for which to get rules.
    */
@@ -133,26 +140,24 @@
 
 
   /**
-   * Message the background to set/update `rules' for each  of `paths'.
+   * Message the background to set/update `site'.
    * @param {string} site - the domain to associate the path & rules to.
-   * @param {object} rule - a rule to set
    */
-  put = rule => send("put", rule),
+  put = (site) => send("put", site),
 
 
   /**
-   * Message the background to delete site, path or rule. The scope of
-   * deletion is specified by the last defined parameter. E.g. `site'
-   * alone will delete all paths and searches associated with
-   * `site'. An additional `path' parameter will cause that ID to be
-   * removed only. Furthermore, passing a valid `rule' will cause that
-   * rule to be removed from `path'.
+   * Message the background to delete specified parts of site
+   * object. The scope of deletion works via specificity of content in
+   * `site'. If a `paths' property is defined, each of the paths in it
+   * are searched for rules. If any rules are found in any, those
+   * rules are deleted, but the path itself remains intact. Otherwise,
+   * the path is deleted. If no `paths' property is found, all paths
+   * associated with the site are deleted.
    *
-   * @param {string} site - the domain from which to delete
-   * @param {object} path - the path to delete from `site'
-   * @param {object} rule - the rule to delete from `path'
+   * @param {object} site - the site on which to run the delete call.
    */
-  del = (site, path, rule) => send("del", site, path, rule),
+  del = (site) => send("del", site),
 
 
   /**
@@ -202,6 +207,9 @@
   mainView = $(".main-view-container"),
   editView = $(".edit-view-container"),
 
+  mainFooter = $(".site-view-footer"),
+  editFooter = $(".edit-view-footer"),
+
   siteRules = $(".site-view-rules"),
 
   editTitle = $("#edit-title h1"),
@@ -211,18 +219,23 @@
 
   siteUseText = $("#site-status .toggle-text"),
   siteName = $(".site-name"),
-  
-  addButton = $("#site-add-rule button"),
-  editButton = $("#site-edit-rule button"),
-  saveButton = $("#edit-save-rule button"),
-  cancelButton = $("#edit-cancel button"),
+
+  deleteIcon = $(".icon.trash"),
+  exportIcon = $(".icon.export"),
+  importIcon = $(".icon.import"),
+  addNewIcon = $(".icon.add"),
+
+  cancelIcon = $(".icon.cancel"),
+  searchIcon = $(".icon.search"),
+  resetIcon = $(".icon.reset"),
+  saveIcon = $(".icon.save"),
 
   pathDropdown = $(".edit-path-dropdown"),
   searchDropdown = $(".edit-rule-dropdown"),
 
   pathID = $("#path-id"),
   searchID = $("#rule-id"),
-  
+
   pathInput = $("#edit-domain-path"),
   searchInput = $("#edit-search"),
   replaceInput = $("#edit-replace"),
@@ -237,16 +250,36 @@
   setSlider = (slider, status) => slider.attr("checked", status),
 
 
-  showMain = () => { mainView.show(); editView.hide(); },
+  getSlider = (slider) => slider.prop("checked"),
 
 
-  showEdit = () => { mainView.hide(); editView.show(); },
+  showMain = () => {
+    mainView.show();
+    mainFooter.show();
+    editView.hide();
+    editFooter.hide();
+  },
+
+
+  showEdit = () => {
+    mainView.hide();
+    mainFooter.hide();
+    editView.show();
+    editFooter.show();
+  },
+
+
+  showSearch = () => {
+    log("Search screen in development");
+  },
+
 
   /* We'll assume that we only ever want to edit rules for the current
    * tab. Though this might not always be the case, anything more
    * involved is too much for such a lean popup anyway. A domain
    * selector dropdown below the main toggle could also work.
    */
+
 
   withURL = callback =>
     browser.tabs.query({ currentWindow: true, active: true })
@@ -275,10 +308,20 @@
 
 
   edit = (rule, path) => {
+    editTitle.text("Edit rule");
     addRuleAndPathToDOM(rule, path);
     showEdit();
     pathInput.focus().select();
   },
+
+
+  reset = event => {
+    voidInput();
+    pathInput.focus();
+  },
+
+
+  search = event => showSearch(),
 
 
   cancel = event => {
@@ -317,6 +360,19 @@
       .parents(".site-rule-wrapper").toggleClass("active");
   },
 
+
+  onClickOrEnter = (element, callback) => {
+    element.on("keydown", function (event) {
+      if (event.keyCode === 13)
+        callback(event);
+    });
+    element.on("click", function (event) {
+      element.blur();
+      callback(event);
+    });
+  },
+
+
   ///////////////////////
   // BACKGROUND EVENTS //
   ///////////////////////
@@ -325,20 +381,22 @@
 
   save = event =>
     withURL(url => {
-      put({
-        site: url.host,
-        path: {
-          //pathID: pathID.attr("data-path-id"),
+      let site = {
+        domain: url.host,
+        siteIsEnabled: getSlider(siteToggle),
+        paths: [{
+          pathIsEnabled: true,
           pathType: pathDropdown.val(),
           pathName: pathInput.val(),
-        },
-        rule: {
-          //ruleID: searchID.attr("data-rule-id"),
-          ruleType: searchDropdown.val(),
-          search: searchInput.val(),
-          replace: replaceInput.val()
-        }
-      });
+          rules: [{
+            ruleIsEnabled: true,
+            ruleType: searchDropdown.val(),
+            ruleSearch: searchInput.val(),
+            ruleReplace: replaceInput.val()
+          }]
+        }]
+      };
+      put(site);
       voidInput();
       showMain();
     }),
@@ -356,11 +414,19 @@
   },
 
 
+  deleteAll = () => clear(),
+
+
   toggleSite = () => {},
 
 
   toggleMain = () => {},
 
+
+  exportData = () => log("Export all rules"),
+
+
+  importData = () => log("Import all rules"),
 
   ///////////////
   // RENDERING //
@@ -378,7 +444,6 @@
     for (let path of siteData.paths)
       siteRules.append(renderPath(path));
     setSlider(siteToggle, (siteData.siteIsEnabled || true));
-
   },
 
 
@@ -396,8 +461,6 @@
 
     let tableElement = pathElement.find("tbody");
 
-
-
     for (let rule of path.rules)
       tableElement.append(renderRule(rule, path));
 
@@ -410,6 +473,16 @@
     ruleElement.find(".delete").on("click", event => deleteRule(rule, path, event.target));
     ruleElement.find(".search, .replace").on("click", event => edit(rule, path));
     return ruleElement;
+  },
+
+
+  initialize = () => {
+    withURL(url => {
+      state();
+      get(url.host);
+      showMain();
+      addBackgroundListener();
+    });
   }
 
 
@@ -421,29 +494,38 @@
   //////////
 
 
-  // background messaging
-  mainToggle.on("click", toggleMain);
+  onClickOrEnter(mainToggle, toggleMain);
 
 
-  siteToggle.on("click", toggleSite);
+  onClickOrEnter(siteToggle, toggleSite);
 
 
-  saveButton.on("click", save);
-
-  // UI events
-  addButton.on("click", add);
+  onClickOrEnter(addNewIcon, add);
 
 
-  cancelButton.on("click", cancel);
+  onClickOrEnter(deleteIcon, deleteAll);
 
 
-  // make a few calls
-  withURL(url => {
-    state();
-    get(url.host);
-    addBackgroundListener();
-  });
+  onClickOrEnter(exportIcon, exportData);
+
+
+  onClickOrEnter(importIcon, importData);
+
+
+  onClickOrEnter(saveIcon, save);
+
+
+  onClickOrEnter(cancelIcon, cancel);
+
+
+  onClickOrEnter(resetIcon, reset);
+
+
+  onClickOrEnter(searchIcon, search);
+
 
   // we are in business
+  initialize();
+
 
 })();

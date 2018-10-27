@@ -1,13 +1,15 @@
 <html>
   <head>
     <meta charset="utf-8"/>
-    <link rel="stylesheet" type="text/css" href="../css/http-scratchmarks-popup.css"/>
-    <script src="../js/jquery-3.3.1.slim.min.js"></script>
-    <script src="../js/mustache.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/popup.css"/>
+    <script src="../js/third-party/jquery-3.3.1.slim.min.js"></script>
+    <script src="../js/third-party/mustache.min.js"></script>
+    <script src="../../util/util.js"></script>
     <title>HTTP Scratchmarks</title>
   </head>
 
   <body>
+
     <div class="main-view-container">
       <div id="main-title">
         <h1 class="main-title-header" title="Search & replace HTTP response bodies before loading.">Enable HTTP Scratchmarks</h1>
@@ -38,10 +40,10 @@
             </div>
           </div>
           <div class="site-view-rules"></div>
-          
         </div>
       </div>
     </div>
+
     <div class="edit-view-container">
       <div id="edit-title">
         <h1 class="edit-title-header">Edit rule</h1>
@@ -74,27 +76,56 @@
           <div class="edit-segment">
             <input id="edit-replace" type="text" placeholder="string w/ matching groups (e.g. $1, $2, etc.)" />
           </div>
-          <div class="edit-rule-buttons">
-            <div id="edit-save-rule">
-              <button>Save rule</button>
-            </div>
-            <div id="edit-cancel">
-              <button>Cancel</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
 
-    <script id="site-name-template" type="text/template">
-     Apply these rules on <span class="site-name" title="Add rule for domain">{{ domain }}</span>
-    </script>
 
-    <script id="site-path-template" type="text/template">
-      <div class="site-rule-wrapper">
+    <div class="site-view-footer">
+      <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Add new rule." class="icon add"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Export your rules." class="icon export"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Import previously exported rules." class="icon import"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Delete all rules." class="icon trash"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-view-footer">
+      <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Save rule." class="icon save"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Reset input fields." class="icon reset"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Search for existing rules." class="icon search"></span>
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+  <script id="site-name-template" type="text/template">
+     Apply these rules on <span class="site-name" title="Add rule for domain">{{ domain }}</span>
+  </script>
+
+  <script id="site-path-template" type="text/template">
+      <div class="site-rule-wrapper" title="{{ pathType }}: {{ pathName }}">
         <div class="site-rule-accordion-wrapper">
           <button class="site-rule-path">
-            <span class="site-rule-path-text" title={{ pathName }}>{{ pathName }}</span>
+            <span class="site-rule-path-text {{ pathType }}">{{ pathName }}</span>
           </button>
           <div class="site-rule-options">
             <span class="site-rule-options delete" title="Delete path & associated rules."></span>
@@ -111,37 +142,18 @@
           </table>
         </div>
       </div>
-    </script>
+  </script>
 
-    <script id="site-rule-template" type="text/template">
+  <script id="site-rule-template" type="text/template">
       <tr class="site-rule-table-row">
-        <td class="site-rule-table-cell search" title="Click to edit.">{{ ruleSearch }}</td>
-        <td class="site-rule-table-cell replace" title="Click to edit." >{{ ruleReplace }}</td>
+        <td class="site-rule-table-cell search" title="Click to edit {{ ruleType }}">{{ ruleSearch }}</td>
+        <td class="site-rule-table-cell replace" title="Click to edit {{ ruleType }}" >{{ ruleReplace }}</td>
         <td class="site-rule-table-cell options">
           <!--  <span class="site-rule-table-row option edit" title="Edit this rule."></span> -->
           <span class="site-rule-table-row option delete" title="Delete this rule."></span>
         </td>
       </tr>
-    </script>
+  </script>
 
-
-    <div class="site-view-footer">
-      <div class="site-icons">
-        <div class="site-icon-wrapper">
-          <span title="Delete all rules." class="site-icon trash"></span>
-        </div>
-        <div class="site-icon-wrapper">
-          <span title="Export your rules." class="site-icon export"></span>
-        </div>
-        <div class="site-icon-wrapper">
-          <span title="Import previously exported rules." class="site-icon import"></span>
-        </div>
-        <div class="site-icon-wrapper">
-          <span title="Add new rule." class="site-icon add"></span>
-        </div>
-      </div>
-    </div>
-
-  </body>
-  <script src="../js/http-scratchmarks-popup.js"></script>
+  <script src="../js/popup.js"></script>
 </html>

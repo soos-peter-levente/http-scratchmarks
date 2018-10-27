@@ -37,7 +37,7 @@ label {
   padding-right: 15px;
 }
 .main-view-container {
-  display: initial;
+  display: none;
   max-height: 550px;
 }
 .edit-view-container {
@@ -175,33 +175,34 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   width: 100%;
 }
 
-.site-icons {
+.icons {
   display: flex;
   margin-right: 15px;
   padding-bottom: 15px;
   padding-top: 20px;
   padding-left: 15px;
 }
-.site-icon-wrapper {
+.icon-wrapper {
   height: auto;
 }
-.site-icon {
+.icon {
   background-color: darkgray;
   transition: background-color 0.5s;
   cursor: pointer;
   height: 0;
   width: 0;
 }
-.site-icon:hover {
+.icon:focus,
+.icon:hover {
   background-color: black;
 }
-.site-icon.trash {
+.icon.trash {
   mask-image: url(../icons/trash-solid.svg);
   mask-repeat: no-repeat;
   padding: 12px;
   margin: 25px;
 }
-.site-icon.export {
+.icon.export {
   mask-image: url(../icons/file-export-solid.svg);
   mask-repeat: no-repeat;
   padding: 15px;
@@ -209,7 +210,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   padding: 15px 15px 2px 15px;
   padding-top: 11px;
 }
-.site-icon.import {
+.icon.import {
   mask-image: url(../icons/file-import-solid.svg);
   mask-repeat: no-repeat;
   padding: 15px;
@@ -217,8 +218,36 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   padding: 15px 15px 2px 15px;
   padding-top: 11px;
 }
-.site-icon.add {
+.icon.add {
   mask-image: url(../icons/plus-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 14px;
+  margin: 25px;
+}
+.icon.cancel {
+  mask-image: url(../icons/arrow-left-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 12px;
+  margin: 25px;
+}
+.icon.search {
+  mask-image: url(../icons/search-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 15px;
+  margin: 25px;
+  padding: 15px 15px 2px 15px;
+  padding-top: 11px;
+}
+.icon.reset {
+  mask-image: url(../icons/undo-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 15px;
+  margin: 25px;
+  padding: 15px 15px 2px 15px;
+  padding-top: 11px;
+}
+.icon.save {
+  mask-image: url(../icons/check-solid.svg);
   mask-repeat: no-repeat;
   padding: 14px;
   margin: 25px;
@@ -290,6 +319,40 @@ button::-moz-focus-inner {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.site-rule-path-text.domain:after {
+  content: "/*";
+  color: darkgray;
+}
+.site-rule-path-text.domain:before {
+  content: "\00a0 ";
+  color: darkgray;
+}
+.site-rule-path-text.prefix:before {
+  content: "\00a0 ";
+  color: darkgray;
+}
+.site-rule-path-text.prefix:after {
+  content: ".*";
+  color: darkgray;
+}
+.site-rule-path-text.regex:before {
+  content: "/";
+  color: darkgray;
+}
+.site-rule-path-text.regex:after {
+  content: "/";
+  color: darkgray;
+}
+.site-rule-path-text.fixpath:before {
+  content: "^";
+  color: darkgray;
+}
+.site-rule-path-text.fixpath:after {
+  content: "$";
+  color: darkgray;
+}
+
 .site-rule-type {
   float: right;
 }
