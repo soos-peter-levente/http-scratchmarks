@@ -20,7 +20,7 @@
   "browser_action": {
     "default_title": "HTTP Scratchmarks",
     "default_icon": "res/icons/tag-icon/icon48.png",
-    "default_popup": "popup/html/http-scratchmarks-popup.html"
+    "default_popup": "popup/html/popup.html"
   },
 
   "web_accessible_resources": [
@@ -29,13 +29,16 @@
 
   "background": {
     "scripts": [
+      "util/util.js",
       "background/lib/Rule.js",
+      "background/lib/Path.js",
+      "background/lib/Site.js",
       "background/lib/RuleFilter.js",
       "background/lib/Storage.js",
       "background/lib/RequestSearchAndReplace.js",
       "background/lib/BackgroundService.js",
 
-      "background/http-scratchmarks.js"
+      "background/background.js"
     ]
   }
 }
