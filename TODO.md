@@ -1,6 +1,8 @@
 * edit overwrite
 * rule filter
 * search & replace
-* import/export
 * store/load extension setings
+* site dropdown/search field in main
+* import/export
+* rule search
 * localization (separate data & locale properties for mustache)
