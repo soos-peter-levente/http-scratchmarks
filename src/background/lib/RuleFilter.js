@@ -94,7 +94,7 @@ const RuleFilter = (function () {
         }
       });
 
-      return rules.map(rule => new Rule(rule));
+      return rules;
     }
 
   };

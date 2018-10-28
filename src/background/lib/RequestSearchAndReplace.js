@@ -36,19 +36,25 @@ var RequestSearchAndReplace = (function () {
   RequestSearchAndReplace = function () {};
 
 
-  RequestSearchAndReplace.prototype.exec = function (request, rules) {
-    let filter = browser.webRequest.filterResponseData(request.requestId);
+  RequestSearchAndReplace.prototype = {
 
-    filter.ondata = event => {
-      let string = ab2str(event.data);
-      rules.map(rule => {
-        log(rule);
-        string = rule.apply(string);
-      });
-      let data = str2ab(string);
-      filter.write(data);
-    };;
-    filter.onstop = event => filter.disconnect();
+
+    exec: function (request, rules) {
+      let filter = browser.webRequest.filterResponseData(request.requestId);
+
+      filter.ondata = event => {
+        let string = ab2str(event.data);
+        rules.map(rule => {
+          log(rule);
+          string = new Rule(rule).apply(string);
+        });
+        let data = str2ab(string);
+        filter.write(data);
+      };;
+      filter.onstop = event => filter.disconnect();
+    }
+
+
   };
 
 
