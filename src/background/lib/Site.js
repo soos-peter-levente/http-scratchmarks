@@ -86,11 +86,25 @@ const Site = (function () {
     },
 
 
-    merge: function (site) {
+    merge: function (site, prevSite) {
+
       this.domain = site.domain;
       this.siteIsEnabled = site.siteIsEnabled;
-      for (let i = 0; i < site.paths.length; i++) {
-        this.mergePath(site.paths[i]);
+
+      if (prevSite !== undefined) {
+        log("Previous site argument detected. Updating it.");
+        let newPath = new Path(site.paths[0]);
+        let prevPath = new Path(prevSite.paths[0]);
+        for (let i = 0; i < this.paths.length; i++) {
+          if (prevPath.equals(this.paths[i])) {
+            this.paths[i] = new Path(this.paths[i]).merge(newPath, prevPath);
+            break;
+          }
+        }
+      } else {
+        for (let i = 0; i < site.paths.length; i++) {
+          this.mergePath(site.paths[i]);
+        }
       }
       return this;
     },

@@ -81,13 +81,26 @@ const Path = (function () {
     },
 
 
-    merge: function (path) {
-      log("Merging path", path);
+    merge: function (path, prevPath) {
+
       this.pathIsEnabled = path.pathIsEnabled;
       this.pathType = path.pathType;
       this.pathName = path.pathName;
-      for (var i = 0; i < path.rules.length; i++) {
-        this.mergeRule(path.rules[i]);
+
+      if (prevPath !== undefined) {
+        log("Previous path argument detected. Searching rules.");
+        let newRule = new Rule(path.rules[0]);
+        let prevRule = new Rule(prevPath.rules[0]);
+        for (let i = 0; i < this.rules.length; i++) {
+          if (prevRule.equals(this.rules[i])) {
+            log("Found previous rule at index", i, ". Updating.");
+            this.rules[i] = newRule;
+          }
+        }
+      } else {
+        for (var i = 0; i < path.rules.length; i++) {
+          this.mergeRule(path.rules[i]);
+        }
       }
       return this;
     },

@@ -170,9 +170,10 @@ const BackgroundService = (function () {
     },
 
 
-    put: function (site) {
+    put: function (site, prev) {
       return this.get(site.domain)
-        .then(stored => new Site(stored).merge(new Site(site)))
+        .then(stored => new Site(stored)
+              .merge(new Site(site), prev ? new Site(prev) : undefined))
         .then(result => storage.put(site.domain, result)
               .then(()=> this.get(site.domain)));
     },

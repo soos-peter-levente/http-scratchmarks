@@ -143,9 +143,10 @@
 
   /**
    * Message the background to set/update `site'.
-   * @param {string} site - the domain to associate the path & rules to.
+   * @param {object} site - a site object.
+   * @param {string} prev - site object to update with `site' (optional)
    */
-  put = (site) => send("put", site),
+  put = (site, prev) => send("put", site, prev),
 
 
   /**
@@ -310,34 +311,31 @@
     searchInput.focus();
   },
 
-  /* This is not useful: if the user closes the popup during editing,
-   * the original rule is lost. `put' should be capable of looking up
-   * previous rules and updating them. It seems like this will require
-   * either a second parameter in the API, which is a site object or a
-   * unique identifier to compare. */
-  edit = (site, path, rule, element) => {
+
+  edit = (site, path, rule) => {
     editTitle.text("Edit rule");
     addPathAndRuleToDOM(path, rule);
-    deleteRule(makeSiteObject(site, path, rule));
     showEdit();
     pathInput.focus().select();
-
     saveIcon.off();
-    cancelIcon.off();
+
+    let prev = makeSiteObject(site, path, rule);
 
     onClickOrEnter(saveIcon, event => {
-      save();
+      log("Adding update event.");
+      let updated;
+
+      withURL(url => {
+        updated = inputToSiteObject(url.host);
+        put(updated, prev);
+      });
+
+      log("Restoring save event");
       saveIcon.off();
       onClickOrEnter(saveIcon, save);
-    });
-
-    // put the previous rule back;
-    onClickOrEnter(cancelIcon, event => {
-      put(makeSiteObject(site,path,rule));
-      cancelIcon.off();
-      onClickOrEnter(cancelIcon, cancel);
       showMain();
     });
+
   },
 
 
@@ -404,27 +402,14 @@
   ///////////////////////
 
 
-  save = event =>
-    withURL(url => {
-      let site = {
-        domain: url.host,
-        siteIsEnabled: getSlider(siteToggle),
-        paths: [{
-          pathIsEnabled: true,
-          pathType: pathDropdown.val(),
-          pathName: pathInput.val(),
-          rules: [{
-            ruleIsEnabled: true,
-            ruleType: searchDropdown.val(),
-            ruleSearch: searchInput.val(),
-            ruleReplace: replaceInput.val()
-          }]
-        }]
-      };
-      put(site);
+  save = event => {
+    withURL(url =>{
+      put(inputToSiteObject(url.host), undefined);
+      // we are saving a fresh rule -----^
       voidInput();
       showMain();
-    }),
+    });
+  },
 
 
   deleteSite = (site, icon) => {
@@ -482,6 +467,25 @@
   },
 
 
+  inputToSiteObject = (domain) => {
+    return {
+      domain: domain,
+      siteIsEnabled: getSlider(siteToggle),
+      paths: [{
+        pathIsEnabled: true,
+        pathType: pathDropdown.val(),
+        pathName: pathInput.val(),
+        rules: [{
+          ruleIsEnabled: true,
+          ruleType: searchDropdown.val(),
+          ruleSearch: searchInput.val(),
+          ruleReplace: replaceInput.val()
+        }]
+      }]
+    };
+  },
+
+  
   ///////////////
   // RENDERING //
   ///////////////
@@ -503,7 +507,7 @@
 
     if (site.paths.length > 0) {
     for (let path of site.paths)
-      siteRules.append(renderPath(path, site));
+      siteRules.append(renderPath(site, path));
     }
 
     setSlider(siteToggle, (site.siteIsEnabled || true));
@@ -515,7 +519,7 @@
       .find(".site-name").on("click", addDomain),
 
 
-  renderPath = (path, site) => {
+  renderPath = (site, path) => {
     let pathElement = $(render(pathTemplate, path));
 
     pathElement.find("button").on("click", toggleContents);
@@ -526,14 +530,14 @@
     let tableElement = pathElement.find("tbody");
 
     for (let rule of path.rules)
-      tableElement.append(renderRule(rule, path, site));
+      tableElement.append(renderRule(site, path, rule));
 
     return pathElement;
   },
 
 
   // more of the same
-  renderRule = (rule, path, site) => {
+  renderRule = (site, path, rule) => {
     let ruleElement = $(render(ruleTemplate, rule));
     ruleElement.find(".delete").on("click", event => {
       deleteRule(makeSiteObject(site, path, rule), event.target);
