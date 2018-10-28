@@ -1,12 +1,9 @@
 var RequestSearchAndReplace = (function () {
 
-  function RequestSearchAndReplace (rules) {
-    this.rules = rules;
-  }
+  function RequestSearchAndReplace () {}
 
-  RequestSearchAndReplace.prototype.exec = function (data) {
-    console.log("These rules would be applied:", this.rules);
-    console.log("to this string:", data);
+  RequestSearchAndReplace.prototype.exec = function (request, rules) {
+    console.log("Apply rules", rules, "to", request);
   };
 
   function str2ab(str) {

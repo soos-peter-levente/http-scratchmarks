@@ -92,9 +92,10 @@ const Site = (function () {
       this.siteIsEnabled = site.siteIsEnabled;
 
       if (prevSite !== undefined) {
-        log("Previous site argument detected. Updating it.");
+
         let newPath = new Path(site.paths[0]);
         let prevPath = new Path(prevSite.paths[0]);
+
         for (let i = 0; i < this.paths.length; i++) {
           if (prevPath.equals(this.paths[i])) {
             this.paths[i] = new Path(this.paths[i]).put(newPath, prevPath);
@@ -106,6 +107,7 @@ const Site = (function () {
           this.mergePath(site.paths[i]);
         }
       }
+
       return this;
     },
 
@@ -160,6 +162,11 @@ const Site = (function () {
           this.paths.splice(i, 1);
         }
       }
+
+      if (this.paths.length === 1 &&
+          this.paths[0].rules.length === 0)
+        this.paths = [];
+
       return this;
     },
   };

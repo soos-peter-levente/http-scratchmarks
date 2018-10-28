@@ -82,13 +82,11 @@ const Path = (function () {
 
 
     put: function (path, prevPath) {
-
       this.pathIsEnabled = path.pathIsEnabled;
       this.pathType = path.pathType;
       this.pathName = path.pathName;
 
       if (prevPath !== undefined) {
-        log("Previous path argument detected. Searching rules.");
         let newRule = new Rule(path.rules[0]);
         let prevRule = new Rule(prevPath.rules[0]);
         for (let i = 0; i < this.rules.length; i++) {
@@ -102,6 +100,7 @@ const Path = (function () {
           this.mergeRule(path.rules[i]);
         }
       }
+
       return this;
     },
 

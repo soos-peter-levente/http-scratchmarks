@@ -182,9 +182,7 @@
          * listed explicitly until behavior is sorted out.
          */
         break;;
-      case "clear":
-        voidList();   // special case
-        break;;
+      case "clear": // special case
       case "start":
       case "stop":
       case "toggle":
@@ -257,6 +255,9 @@
   getSlider = (slider) => slider.prop("checked"),
 
 
+  setInput = (input, status) => input.prop("disabled", status),
+
+
   showMain = () => {
     mainView.show();
     mainFooter.show();
@@ -314,26 +315,26 @@
 
   edit = (site, path, rule) => {
     editTitle.text("Edit rule");
-    addPathAndRuleToDOM(path, rule);
+    pathInput.prop("disabled", true);
+    pathDropdown.prop("disabled", true);
     showEdit();
-    pathInput.focus().select();
-    saveIcon.off();
+    addPathAndRuleToDOM(path, rule);
 
     let prev = makeSiteObject(site, path, rule);
 
+    saveIcon.off();
     onClickOrEnter(saveIcon, event => {
-      log("Adding update event.");
       let updated;
 
       withURL(url => {
         updated = inputToSiteObject(url.host);
         put(updated, prev);
+        voidInput();
+        showMain();
       });
 
-      log("Restoring save event");
       saveIcon.off();
       onClickOrEnter(saveIcon, save);
-      showMain();
     });
 
   },
@@ -358,12 +359,19 @@
     pathInput.val("");
     searchInput.val("");
     replaceInput.val("");
+
+    pathDropdown.val("domain");
+    searchDropdown.val("string");
+
+    pathInput.prop("disabled", false);
+    pathDropdown.prop("disabled", false);
+
     searchID.attr("data-rule-id", "");
     pathID.attr("data-path-id", "");
   },
 
 
-  voidList = () => siteRules.html(renderEmptyList()),
+  voidList = () => siteRules.html(""),
 
 
   addPathAndRuleToDOM = (path, rule) => {
@@ -429,7 +437,7 @@
 
   deleteRule = (site, icon) => {
     withURL(url => del(site));
-    $(icon).parents("tr.site-rule-table-row").html("");
+    $(icon).parents("tr.site-rule-table-row").remove();
   },
 
 
@@ -455,7 +463,7 @@
     let newPath = {
       pathType: path.pathType,
       pathName: path.pathName,
-      isPathEnabled: path.isPathEnabled
+       isPathEnabled: path.isPathEnabled
     };
     let newSite = {
       domain: site.domain,
@@ -485,7 +493,7 @@
     };
   },
 
-  
+
   ///////////////
   // RENDERING //
   ///////////////
@@ -496,21 +504,25 @@
 
 
   renderData = site => {
+
+    log(site);
     voidList();
 
     withURL(url => renderDomain(url.host));
 
-    if (site.paths === undefined) {
+    if (site.paths === undefined || site.paths.length === 0) {
       renderEmptyList();
       return;
-    }
-
-    if (site.paths.length > 0) {
-    for (let path of site.paths)
-      siteRules.append(renderPath(site, path));
-    }
+    };
 
     setSlider(siteToggle, (site.siteIsEnabled || true));
+
+
+    if (site.paths.length > 0) {
+      for (let path of site.paths)
+        siteRules.append(renderPath(site, path));
+    }
+
   },
 
 

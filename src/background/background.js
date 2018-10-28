@@ -23,37 +23,15 @@
 
 (function () {
 
-  "use strict"; const
+
+  "use strict";
 
 
-  /* do we have to request the available rules each time? */
-  searchAndReplace = request => {
-    console.log(request);
-    /*
-      0. return early if extension or site is disabled, or if no rules
-      are stored for either site, `request.originUrl' or `request.url'
-
-      let filter = browser.webRequest.filterResponseData(request.requestId);
-
-      1. Use RuleFilter object to prune the rules associated with the
-      domain
-
-      let rules = new RuleFilter().filter();
-
-      2. if any apply, construct RequestSearchAndReplace with the pruned array.
-
-      let sr = new RequestSearchAndReplace(rules);
-
-      3. Pass request body to its exec();
-      //filter.ondata = event =>
-      filter.write(sr.exec(event.data)); filter.onstop = event =>
-      filter.disconnect(); */
-  },
+  const bg = new BackgroundService();
 
 
-  bg = new BackgroundService(searchAndReplace);
-
-
+  bg.start();
   bg.listen();
+
 
 })();
