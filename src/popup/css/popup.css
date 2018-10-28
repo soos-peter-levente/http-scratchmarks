@@ -369,12 +369,6 @@ button::-moz-focus-inner {
   width: 50%;
   text-align: center;
 }
-.info.empty-list:before {
-  content: "(";
-}
-.info.empty-list:after {
-  content: ")";
-}
 
 /* TABLE */
 .site-rule-table {

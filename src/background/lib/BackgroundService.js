@@ -108,7 +108,7 @@ const BackgroundService = (function () {
       this.get(url.host)
         .then(stored => this.filter.filter(request, stored))
         .then(rules => this.processor.exec(request, rules));
-    }, 
+    },
 
 
 
