@@ -141,6 +141,9 @@
   get = site => send("get", site),
 
 
+  getAll = () => send("getAll"),
+
+
   /**
    * Message the background to set/update `site'.
    * @param {object} site - a site object.
@@ -175,6 +178,9 @@
         renderData(response.payload);
         break;;
         // don't redraw
+      case "getAll":
+        downloadAsFile(response.payload, "export.json");
+        break;;
       case "del":
         /* The UI event handlers should take care of visual removal of
          * elements. Deletion in storage has already happened by the
@@ -284,7 +290,7 @@
    * involved is too much for such a lean popup anyway. A domain
    * selector dropdown below the main toggle could also work.
    */
-
+  
 
   withURL = callback =>
     browser.tabs.query({ currentWindow: true, active: true })
@@ -452,7 +458,7 @@
   toggleMain = () => {},
 
 
-  exportData = () => log("Export all rules"),
+  exportData = () => getAll(),
 
 
   importData = () => log("Import all rules"),
@@ -490,6 +496,18 @@
         }]
       }]
     };
+  },
+
+
+  // jQuery?
+  downloadAsFile = (data, filename) => {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/text;charset=utf-8,'
+                         + encodeURI(JSON.stringify(data)));
+    element.setAttribute('download', filename);
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   },
 
 
@@ -569,8 +587,8 @@
       renderEmptyList();
     }
   },
-  
-  
+
+
   initialize = () => {
     withURL(url => {
       state();

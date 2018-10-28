@@ -193,6 +193,11 @@ const BackgroundService = (function () {
     },
 
 
+    getAll: function () {
+      return storage.get().then(stored => stored || {});
+    },
+
+
     put: function (site, prev) {
       return this.get(site.domain)
         .then(stored => new Site(stored).put(site, prev))

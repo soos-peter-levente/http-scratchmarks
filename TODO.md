@@ -4,7 +4,7 @@
 * rule editing screen CSS
 * store/load extension settings
 * site dropdown/search field in main
-* import/export
+* import
 * rule search
 * localization (separate data & locale properties for mustache)
 
