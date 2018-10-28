@@ -81,7 +81,7 @@ const Path = (function () {
     },
 
 
-    merge: function (path, prevPath) {
+    put: function (path, prevPath) {
 
       this.pathIsEnabled = path.pathIsEnabled;
       this.pathType = path.pathType;

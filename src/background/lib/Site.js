@@ -86,7 +86,7 @@ const Site = (function () {
     },
 
 
-    merge: function (site, prevSite) {
+    put: function (site, prevSite) {
 
       this.domain = site.domain;
       this.siteIsEnabled = site.siteIsEnabled;
@@ -97,7 +97,7 @@ const Site = (function () {
         let prevPath = new Path(prevSite.paths[0]);
         for (let i = 0; i < this.paths.length; i++) {
           if (prevPath.equals(this.paths[i])) {
-            this.paths[i] = new Path(this.paths[i]).merge(newPath, prevPath);
+            this.paths[i] = new Path(this.paths[i]).put(newPath, prevPath);
             break;
           }
         }
@@ -117,7 +117,7 @@ const Site = (function () {
       let i = this.findPath(path);
       if (Number.isInteger(i)) {
         log("Path exists. Entering Path.merge().");
-        this.paths[i] = new Path(this.paths[i]).merge(path);
+        this.paths[i] = new Path(this.paths[i]).put(path);
       } else {
         log("Pushing path.");
         this.paths.push(new Path(path));
