@@ -83,10 +83,10 @@ const Rule = (function () {
 
     apply: function (string) {
       switch (this.ruleType) {
-        case "regexp":
-          return this.applyRegexp(string);  break;
+        case "regex":
+          return string.replace(new RegExp(this.ruleSearch, "g"), this.ruleReplace);
         case "string":
-          return this.applyString(string);  break;
+          return string.split(this.ruleSearch).join(this.ruleReplace);
         default:
           throw new Error("Unrecognized rule type!");
       }
@@ -94,16 +94,6 @@ const Rule = (function () {
 
 
   };
-
-
-  function applyRegexp (string) {
-    log("Regex apply", this.toObject(), "to", string);
-  };
-
-
-  function applyString (string) {
-    log("String apply", this.toObject(), "to", string);
-  }
 
 
   return Rule;

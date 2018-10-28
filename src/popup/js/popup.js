@@ -429,15 +429,14 @@
   deletePath = (site, icon) => {
     withURL(url => del(site));
     $(icon).parents(".site-rule-wrapper").remove();
-    if ($(".site-rule-wrapper").length === 0) {
-      renderEmptyList();
-    }
+    maybeRenderEmptyList();
   },
 
 
   deleteRule = (site, icon) => {
     withURL(url => del(site));
     $(icon).parents("tr.site-rule-table-row").remove();
+    maybeRenderEmptyList();
   },
 
 
@@ -564,6 +563,14 @@
   renderEmptyList = () => siteRules.html(render(emptyListTemplate, {})),
 
 
+  maybeRenderEmptyList = () => {
+    if ($(".site-rule-table-row").length === 0) {
+      voidList();
+      renderEmptyList();
+    }
+  },
+  
+  
   initialize = () => {
     withURL(url => {
       state();

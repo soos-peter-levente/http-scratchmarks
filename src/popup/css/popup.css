@@ -382,16 +382,21 @@ button::-moz-focus-inner {
   text-align: center;
   width: 100%;
 }
-.site-rule-table-cell.replace:before {
+.site-rule-table-cell.options {
+  /*padding-right: 19px;*/
+}
+/*
+.site-rule-table-cell.search:after {
   background-color: darkgray;
   mask-image: url(../icons/arrow-right-solid.svg);
   mask-repeat: no-repeat;
-  padding-right: 30px;
+  padding-left: 15px;
   content: "";
 }
+*/
 .site-rule-table-cell.search,
 .site-rule-table-header.search {
-  padding-left: 30px;
+  padding-left: 15px;
 }
 .site-rule-table-cell.search.regex {
   color: cornflowerblue;
@@ -406,20 +411,27 @@ button::-moz-focus-inner {
 }
 .site-rule-table-header-row {
   font-size: 10px;
-  font-style: bold;
+  font-style: italic;
+  line-height: 30px;
+  text-align: left;
 }
-.site-rule-table-header-row th {
-  padding-bottom:10px;
+.site-rule-table-header-row th{
+  font-weight: normal;
+  padding-left: 15px;
 }
 .site-rule-table-row {
   cursor: pointer;
   padding-top: 10px;
   padding-bottom: 10px;
   font-size: 10px;
+  white-space: normal;
+  line-height: 20px;
+}
+.site-rule-table-row td {
+  max-width: 25px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: 30px;
 }
 .site-rule-table-row.options {
   color: gainsboro;
@@ -454,8 +466,7 @@ button::-moz-focus-inner {
 .site-rule-table .search,.site-rule-table .replace {
   font-weight: normal;
   text-align: left;
-  min-width: 41%;
-  max-width: 41%;
+  padding-left: 15px;
 }
 
 

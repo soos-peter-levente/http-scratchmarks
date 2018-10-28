@@ -33,15 +33,68 @@ const RuleFilter = (function () {
   log = prefixLog("RuleFilter: "),
 
 
-  RuleFilter = function () {};
+  RuleFilter = function () {},
+
+
+  pathMatchesDomain = (path, url) => {
+    switch (path.pathType) {
+      case "domain":
+        return matchDomain(path.pathName, url);
+        break;;
+      case "regex":
+        return matchRegex(path.pathName, url);
+        break;;
+      case "fixpath":
+        return matchFixpath(path.pathName, url);
+        break;;
+      case "prefix":
+        return matchPrefix(path.pathName, url);
+        break;;
+      default:
+        return false;
+    }
+  },
+
+
+  matchDomain = (pathname, url) => url.host.startsWith(pathname),
+
+
+  matchRegex = (pathname, url) => url.href.match(pathname),
+
+
+  matchFixpath = (pathname, url) =>
+    (url.href === pathname ||
+     url.domain + url.pathname + url.search === pathname ||
+     url.pathname + url.search === pathname),
+
+
+  matchPrefix = (pathname, url) =>
+    url.href.startsWith(pathname) ||
+    (url.pathname + url.search).startsWith(pathname) ||
+    (url.domain + url.pathname + url.search).startsWith(pathname)
+
+
+  ;
 
 
   RuleFilter.prototype = {
 
 
-    filter: function (request, rules) {
-      log("Filtering ", rules, "for request", request);
-      return rules;
+    filter: function (request, siteData) {
+      if (siteData === undefined || siteData === {})
+        return [];
+
+      let rules = [];
+
+      let requestUrl = new URL((request.originUrl !== undefined ) ? request.originUrl : request.url);
+
+      siteData.paths.filter(path => {
+        if (pathMatchesDomain(path, requestUrl)) {
+          rules = rules.concat(path.rules);
+        }
+      });
+
+      return rules.map(rule => new Rule(rule));
     }
 
   };

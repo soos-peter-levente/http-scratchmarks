@@ -105,30 +105,10 @@ const BackgroundService = (function () {
 
     process: function (request) {
       let url = new URL((request.originUrl) ? request.originUrl : request.url);
-          /*
-            0. return early if extension or site is disabled, or if no rules
-            are stored for either site, `request.originUrl' or `request.url'
-
-            let filter = browser.webRequest.filterResponseData(request.requestId);
-
-            1. Use RuleFilter object to prune the rules associated with the
-            domain
-
-            let rules = new RuleFilter().filter();
-
-            2. if any apply, construct RequestSearchAndReplace with the pruned array.
-
-            let sr = new RequestSearchAndReplace(rules);
-
-            3. Pass request body to its exec();
-            //filter.ondata = event =>
-            filter.write(sr.exec(event.data)); filter.onstop = event =>
-            filter.disconnect(); */
-
       this.get(url.host)
-        .then(stored => this.filter.filter(request, stored.paths).map(rule => new Rule(rule)))
+        .then(stored => this.filter.filter(request, stored))
         .then(rules => this.processor.exec(request, rules));
-    },
+    }, 
 
 
 
