@@ -319,11 +319,21 @@
   },
 
 
+  addPathRule = site => {
+    editTitle.text("Add new rule to path");
+    pathInput.val(site.paths[0].pathName);
+    pathInput.prop("disabled", true);
+    pathDropdown.prop("disabled", true);
+    showEdit();
+    searchInput.focus();
+  },
+
   edit = (site, path, rule) => {
     editTitle.text("Edit rule");
     pathInput.prop("disabled", true);
     pathDropdown.prop("disabled", true);
     showEdit();
+    searchInput.focus();
     addPathAndRuleToDOM(path, rule);
 
     let prev = makeSiteObject(site, path, rule);
@@ -522,7 +532,6 @@
 
   renderData = site => {
 
-    log(site);
     voidList();
 
     withURL(url => renderDomain(url.host));
@@ -532,7 +541,7 @@
       return;
     };
 
-    setSlider(siteToggle, (site.siteIsEnabled || true));
+    setSlider(siteToggle, (site.siteIsEnabled !== undefined) ? site.siteIsEnabled : true);
 
 
     if (site.paths.length > 0) {
@@ -554,6 +563,9 @@
     pathElement.find("button").on("click", toggleContents);
     pathElement.find(".delete").on("click", event => {
       deletePath(makeSiteObject(site, path), event.target);
+    });
+    pathElement.find(".add").on("click", event => {
+      addPathRule(makeSiteObject(site, path));
     });
 
     let tableElement = pathElement.find("tbody");

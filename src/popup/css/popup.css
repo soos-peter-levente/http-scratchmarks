@@ -132,9 +132,8 @@ button:disabled {
   opacity: 100;
   visibility: visible;
 }
-.site-rule-wrapper.active .site-rule-options {
-  opacity: 100;
-  visibility: visible;
+.site-rule-wrapper:hover .site-rule-path {
+  width: 80%;
 }
 .site-rule-wrapper.active {
   box-shadow: 0px 0px 4px 0px #88888888;
@@ -272,6 +271,7 @@ button::-moz-focus-inner {
 }
 .site-rule-path {
   background-color: transparent;
+  transition: width 0.2s;
   color: #444;
   cursor: pointer;
   width: 100%;
@@ -279,9 +279,24 @@ button::-moz-focus-inner {
   text-align: left;
   outline: none;
   font-size: 15px;
-  width: 87%;
+  width: 100%;
   display: flex;
   padding-right: 10px;
+}
+.site-rule-options .add {
+  background-color: darkgray;
+  transition: background-color 0.2s;
+  mask-image: url(../icons/plus-solid.svg);
+  mask-repeat: no-repeat;
+  height: 0;
+  width: 0;
+  position: absolute;
+  right: 60px;
+  padding: 5px;
+  margin-top: 14px;
+}
+.site-rule-options .add:hover {
+  background-color: black;
 }
 .site-rule-options .delete {
   background-color: darkgray;
@@ -290,13 +305,15 @@ button::-moz-focus-inner {
   mask-repeat: no-repeat;
   height: 0;
   width: 0;
-  padding: 10px;
-  margin-right: 5px;
-  margin-top: 10px;
+  position: absolute;
+  right: 30px;
+  padding: 7px;
+  margin-top: 11px;
 }
 .site-rule-options .delete:hover {
   background-color: black;
 }
+
 .site-rule-path:before {
   mask-image: url(../icons/caret-right-solid.svg);
   mask-repeat: no-repeat;
@@ -313,10 +330,11 @@ button::-moz-focus-inner {
   content: "";
 }
 .site-rule-path-text {
-  max-width: 90%;
+  max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 11px;
 }
 
 .site-rule-path-text.domain:after {
@@ -411,7 +429,7 @@ button::-moz-focus-inner {
 }
 .site-rule-table-header-row th{
   font-weight: normal;
-  padding-left: 15px;
+  padding-left: 35px;
 }
 .site-rule-table-row {
   cursor: pointer;
@@ -439,9 +457,9 @@ button::-moz-focus-inner {
   width: 0;
 }
 .site-rule-table-row.option.delete {
-  mask-image: url(../icons/times-solid.svg);
+  mask-image: url(../icons/trash-alt-regular.svg);
   mask-repeat: no-repeat;
-  padding: 2px 6px 6px 6px;
+  padding: 0px 6px 6px 6px;
   margin-left: 6px;
 }
 .site-rule-table-row:nth-child(even) {
@@ -460,7 +478,7 @@ button::-moz-focus-inner {
 .site-rule-table .search,.site-rule-table .replace {
   font-weight: normal;
   text-align: left;
-  padding-left: 15px;
+  padding-left: 35px;
 }
 
 
