@@ -124,7 +124,9 @@ const BackgroundService = (function () {
     process: function (request) {
       let url = new URL((request.originUrl) ? request.originUrl : request.url);
       this.get(url.host)
-        .then(stored => this.filter.filter(request, stored))
+        .then(stored =>
+              (stored.siteIsEnabled !== false && this.settings.enabled === true) ?
+              this.filter.filter(request, stored) : [])
         .then(rules => this.processor.exec(request, rules));
     },
 
@@ -207,7 +209,6 @@ const BackgroundService = (function () {
 
     toggleMain: function () {
       this.settings.enabled ? this.stop() : this.start();
-      return this.settings.enabled;
     },
 
 
