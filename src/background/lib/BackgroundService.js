@@ -125,7 +125,7 @@ const BackgroundService = (function () {
       let url = new URL((request.originUrl) ? request.originUrl : request.url);
       this.get(url.host)
         .then(stored =>
-              (stored.siteIsEnabled !== false && this.settings.enabled === true) ?
+              (stored.siteIsEnabled === this.settings.enabled === true) ?
               this.filter.filter(request, stored) : [])
         .then(rules => this.processor.exec(request, rules));
     },
