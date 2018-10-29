@@ -54,6 +54,12 @@ const BackgroundService = (function () {
   },
 
 
+  noCacheHeader = {
+    name: "Cache-Control",
+    value: "no-cache, no-store, must-revalidate"
+  },
+
+
   storage = new Storage(),
 
 
@@ -91,15 +97,27 @@ const BackgroundService = (function () {
 
 
     start: function () {
-      browser.webRequest.onBeforeRequest.addListener(
-        this.process.bind(this), this.settings.request, ["blocking"]);
       this.settings.enabled = true;
+
+      browser.webRequest.onBeforeRequest.addListener(
+        this.process.bind(this), this.settings.request,
+        ["blocking"]);
+
+
+      browser.webRequest.onHeadersReceived.addListener(
+        this.uncache.bind(this), this.settings.request,
+        ["blocking", "responseHeaders"]
+      );
+
     },
 
 
     stop: function () {
-      browser.webRequest.onBeforeRequest.removeListener(this.processor);
       this.settings.enabled = false;
+
+      browser.webRequest.onBeforeRequest.removeListener(this.process);
+
+      browser.webRequest.onHeadersReceived.removeListener(this.uncache);
     },
 
 
@@ -108,6 +126,24 @@ const BackgroundService = (function () {
       this.get(url.host)
         .then(stored => this.filter.filter(request, stored))
         .then(rules => this.processor.exec(request, rules));
+    },
+
+
+    uncache: function (response) {
+      this.get(new URL(response.url).host)
+        .then(stored => {
+          let headers = { responseHeaders: response.responseHeaders };
+          if (stored.domain !== undefined) {
+            for (let i = 0 ; i < headers.responseHeaders.length; i++) {
+              if (headers.responseHeaders[i].name === noCacheHeader.name) {
+                headers.responseHeaders[i] = noCacheHeader;
+                return headers;
+              }
+            }
+            headers.responseHeaders.push(noCacheHeader);
+          }
+          return headers;
+        });
     },
 
 

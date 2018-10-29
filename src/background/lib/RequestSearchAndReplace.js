@@ -44,10 +44,7 @@ var RequestSearchAndReplace = (function () {
 
       filter.ondata = event => {
         let string = ab2str(event.data);
-        rules.map(rule => {
-          log(rule);
-          string = new Rule(rule).apply(string);
-        });
+        rules.map(rule => { string = new Rule(rule).apply(string); });
         let data = str2ab(string);
         filter.write(data);
       };;

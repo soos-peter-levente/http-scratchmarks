@@ -17,13 +17,6 @@
     "48": "res/icons/tag-icon/icon48.png",
     "96": "res/icons/tag-icon/icon96.png"
   },
-  
-  "content_scripts": [
-    {
-      "matches": [ "<all_urls>" ],
-      "js": [ "content/content.js" ]
-    }
-  ],
 
   "browser_action": {
     "default_title": "HTTP Scratchmarks",
