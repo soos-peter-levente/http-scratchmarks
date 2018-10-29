@@ -195,12 +195,6 @@ const BackgroundService = (function () {
     },
 
 
-    toggle: function () {
-      this.settings.enabled ? this.stop() : this.start();
-      return this.settings.enabled;
-    },
-
-
     state: function () {
       return this.settings.enabled;
     },
@@ -211,15 +205,22 @@ const BackgroundService = (function () {
     },
 
 
-    flip: function (site) {
+    toggleMain: function () {
+      this.settings.enabled ? this.stop() : this.start();
+      return this.settings.enabled;
+    },
+
+
+    toggleSite: function (site) {
       if (site === undefined)
         // otherwise, everything is returned for an empty query...
         throw new Error("Required parameter 'site' is undefined!");
 
-      return this.get(site).then(stored => {
-        stored.siteIsEnabled = !stored.siteIsEnabled;
-        return this.put(stored);
-      });
+      return this.get(site)
+        .then(stored => {
+          stored.siteIsEnabled = !stored.siteIsEnabled;
+          return this.put(stored);
+        });
 
     },
 

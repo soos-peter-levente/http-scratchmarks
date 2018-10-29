@@ -95,27 +95,27 @@
 
 
   /**
-   * Message background to `start' the extension (global).
+   * Message background to start request processing.
    */
   start = () => send("start"),
 
 
   /**
-   * Message background to `stop' the extension (global).
+   * Message background to stop request processing.
    */
   stop = () => send("stop"),
 
 
   /**
-   * Message background to `flip' the extension switch (global).
+   * Message background to toggle extension.
    */
-  flip = () => send("flip"),
+  toggleMain = () => send("toggleMain"),
 
 
   /**
-   * Message background to `toggle' site.
+   * Message background to toggle site.
    */
-  toggle = site => send("toggle", site),
+  toggleSite = site => send("toggleSite", site),
 
 
   /**
@@ -191,11 +191,11 @@
       case "clear": // special case
       case "start":
       case "stop":
-      case "toggle":
       case "state":
+      case "toggleMain":
         setSlider(mainToggle, response.payload);
         break;;
-      case "flip":
+      case "toggleSite":
         setSlider(siteToggle, response.payload);
         break;;
       default:
@@ -452,10 +452,10 @@
   },
 
 
-  toggleSite = () => {},
+  flipSiteSwitch = () => withURL(url => toggleSite(url.host)),
 
 
-  toggleMain = () => {},
+  flipMainSwitch = () => toggleMain(),
 
 
   exportData = () => getAll(),
@@ -607,10 +607,10 @@
   //////////
 
 
-  onClickOrEnter(mainToggle, toggleMain);
+  onClickOrEnter(mainToggle, flipMainSwitch);
 
 
-  onClickOrEnter(siteToggle, toggleSite);
+  onClickOrEnter(siteToggle, flipSiteSwitch);
 
 
   onClickOrEnter(addNewIcon, add);
