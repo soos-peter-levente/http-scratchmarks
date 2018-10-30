@@ -4,6 +4,14 @@
   "name": "HTTP Scratchmarks",
   "version": "0.1",
 
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Alt+S"
+      }
+    }
+  },
+
   "permissions": [
     "activeTab",
     "storage",

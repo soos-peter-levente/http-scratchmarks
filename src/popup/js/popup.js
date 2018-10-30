@@ -601,7 +601,16 @@
   },
 
 
+  loadingScreen = () => {
+    setTimeout(function () {
+      $(".body-wrapper").toggleClass("active");
+      $(".popup-loader").hide();
+    }, 300);
+  },
+
+
   initialize = () => {
+    loadingScreen();
     withURL(url => {
       state();
       get(url.host);

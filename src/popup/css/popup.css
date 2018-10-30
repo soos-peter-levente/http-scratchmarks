@@ -9,6 +9,19 @@ body {
   display:flex;
   flex-direction: column;
 }
+.body-wrapper {
+  opacity: 0;
+  transition: all 0.3s;
+}
+.body-wrapper.active {
+  opacity: 100;
+}
+.popup-loader-animation-container {
+  position: relative;
+  left: 150px;
+  top: 115px;
+  width: 40px;
+}
 @media screen and ( min-height: 550px ) {
   body {
     overflow-y: visible;
