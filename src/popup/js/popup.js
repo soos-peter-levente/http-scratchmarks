@@ -511,7 +511,7 @@
   },
 
 
-  isInputValid = () => (isPathValid() && isSearchValid()),
+  isInputValid = () => true /*(isPathValid() && isSearchValid())*/,
 
 
   isPathValid = () => {
@@ -528,7 +528,7 @@
 
   isSearchValid = () => {
     let searchString = searchInput.val();
-    let searcThype = searchDropdown.val();
+    let searchType = searchDropdown.val();
     if (searchType === "regex") {
         try {
           new RegExp(searchString);
