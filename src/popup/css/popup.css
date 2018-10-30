@@ -137,7 +137,7 @@ button:disabled {
 }
 .site-rule-wrapper {
   box-shadow: 0px 0px 1px 0px #88888888;
-  transition: all 0.2s;
+  transition: all 0.3s;
   padding: 0px;
 }
 .site-rule-wrapper:hover .site-rule-options {
@@ -276,7 +276,6 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
 /* RULE ACCORDION */
 .site-rule-accordion-wrapper {
   display: flex;
-  width: 99%;
 }
 button::-moz-focus-inner {
   border: 0;
@@ -455,15 +454,19 @@ button::-moz-focus-inner {
 }
 .site-rule-table-row.option.delete {
   mask-image: url(../icons/trash-alt-regular.svg);
+  transition: all 0.3s;
   mask-repeat: no-repeat;
   padding: 0px 6px 6px 6px;
   margin-left: 6px;
+}
+.site-rule-table-row {
+  transition: all 0.3s;
 }
 .site-rule-table-row:nth-child(even) {
   background-color: #F5F5F5;
 }
 .site-rule-table-row:hover,
-.site-rule-table-row:nth-child(even):hover {
+.site-rule-table-row:hover {
   background-color: gold;
 }
 .site-rule-table-row:hover .option.delete {
@@ -515,6 +518,7 @@ button::-moz-focus-inner {
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s;
+  border-radius: 30px;
 }
 .toggle-slider:before {
   position: absolute;
@@ -526,9 +530,10 @@ button::-moz-focus-inner {
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
+  border-radius: 30px;
 }
 input:checked + .toggle-slider {
-  background-color: #2196F3;
+  background-color: gold;
 }
 input:focus + .toggle-slider {
   box-shadow: 0 0 1px #2196F3;
