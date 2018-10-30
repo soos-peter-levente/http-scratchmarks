@@ -427,12 +427,14 @@
 
 
   save = event => {
-    withURL(url =>{
-      put(inputToSiteObject(url.host), undefined);
-      // we are saving a fresh rule -----^
-      voidInput();
-      showMain();
-    });
+    if (isInputValid()) {
+      withURL(url =>{
+        put(inputToSiteObject(url.host), undefined);
+        // we are saving a fresh rule -----^
+        voidInput();
+        showMain();
+      });
+    }
   },
 
 
@@ -506,6 +508,37 @@
         }]
       }]
     };
+  },
+
+
+  isInputValid = () => (isPathValid() && isSearchValid()),
+
+
+  isPathValid = () => {
+    let pathName = pathInput.val();
+    let pathType = pathDropdown.val();
+    switch (pathType) {
+      case "domain": break;;
+      case "fixpath": break;;
+      case "prefix": break;;
+      case "regex": break;;
+    }
+  },
+
+
+  isSearchValid = () => {
+    let searchString = searchInput.val();
+    let searcThype = searchDropdown.val();
+    if (searchType === "regex") {
+        try {
+          new RegExp(searchString);
+          return true;
+        } catch (e) {
+          return false;
+        }
+    } else {
+      return true;
+    }
   },
 
 
