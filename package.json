@@ -1,0 +1,14 @@
+{
+  "name": "http-scratchmarks-tests",
+  "version": "1.0.0",
+  "description": "A unit test suite for the extension",
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine": "^3.3.0"
+  },
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "spl",
+  "license": "MIT"
+}
