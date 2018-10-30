@@ -101,7 +101,6 @@ label {
   color: green;
 }
 #edit-save-rule {
-  /*padding: 15px 0px 15px 0px;*/
   float: right;
 }
 #edit-cancel {
@@ -389,9 +388,6 @@ button::-moz-focus-inner {
 .site-rule-type {
   float: right;
 }
-.site-rule-open, .site-rule-path:hover {
-  /*background-color: #ccc;*/
-}
 .info {
   color:darkgray;
 }
@@ -407,18 +403,6 @@ button::-moz-focus-inner {
   text-align: center;
   width: 100%;
 }
-.site-rule-table-cell.options {
-  /*padding-right: 19px;*/
-}
-/*
-.site-rule-table-cell.search:after {
-  background-color: darkgray;
-  mask-image: url(../icons/arrow-right-solid.svg);
-  mask-repeat: no-repeat;
-  padding-left: 15px;
-  content: "";
-}
-*/
 .site-rule-table-cell.search,
 .site-rule-table-header.search {
   padding-left: 15px;
