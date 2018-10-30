@@ -209,6 +209,7 @@ const BackgroundService = (function () {
 
     toggleMain: function () {
       this.settings.enabled ? this.stop() : this.start();
+      return this.settings.enabled;
     },
 
 
