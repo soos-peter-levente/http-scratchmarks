@@ -21,109 +21,126 @@
     </div>
     <div class="body-wrapper">
       <div class="main-view-container">
-        <div id="main-title">
-          <h1 class="main-title-header" title="Search & replace HTTP response bodies before loading.">Enable HTTP Scratchmarks</h1>
-          <div id="main-status">
-            <div id="main-toggle">
-              <div class="toggle">
-                <label class="toggle-label">
-                  <input type="checkbox" checked>
-                  <span class="toggle-slider"></span>
-                </label>
+
+        <div class="extension-header-container" title="Change HTTP responses before Firefox loads them.">
+          <div class="extension-header-icon"></div>
+          <div class="extension-header-text">Scratchmarks</div>
+          <div class="extension-header-toggle" title="Extension on/off."></div>
+        </div>
+
+        <div class="extension-description-container">
+          <span class="description">Change HTTP responses before Firefox loads them.</span>
+        </div>
+
+        <div class="site-selector-container" title="Select site.">
+
+          <div class="site-display-container">
+            <div class="site-display site-name">example.org</div>
+          </div>
+
+          <div class="site-options-container">
+            <div class="site-options delete-all-rules" title="Delete all rules below."></div>
+            <div class="site-options add-site-rule" title="Add domain rule for site."></div>
+            <div class="site-options toggle-site-state" title="Enable/disable site rules.">
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="site-dropdown-container">
+            <div class="site-dropdown-input-line">
+              <label class="site-dropdown-input-label" for="site-dropdown-input"></label>
+              <input id="site-dropdown-input" placeholder="example.org">
+            </div>
+            <div class="site-dropdown-wrapper">
+              <div class="site-dropdown-list">
+                <a class="site-dropdown list-item">example.org</a>
+                <a class="site-dropdown list-item">archive.org</a>
               </div>
             </div>
           </div>
         </div>
-        <div id="main">
-          <div class="site-view-container">
-            <div id="site">
-              <div id="site-status">
-                <div id="site-toggle">
-                  <h3 class="toggle-text"></h3>
-                  <div class="toggle">
-                    <label class="toggle-label">
-                      <input type="checkbox" checked>
-                      <span class="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="site-view-rules"></div>
+
+
+        <div class="site-rules-container">
+          <div class="site-view-rules"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="edit-view-container">
+      <div id="edit-title">
+        <h1 class="edit-title-header">Edit rule</h1>
+      </div>
+      <div id="edit-main">
+        <div id="path-id" data-path-id></div>
+        <div id="edit-domain">
+          <label class="input-label" for="edit-domain-path">If a URL matches</label>
+          <div class="edit-segment">
+            <input id="edit-domain-path" type="text" placeholder="place"/>
+            <select class="edit-path-dropdown">
+              <option value="domain">domain</option>
+              <option value="fixpath">path</option>
+              <option value="prefix">prefix</option>
+              <option value="regex">regex</option>
+            </select>
+          </div>
+        </div>
+        <div id="edit-rule">
+          <div id="rule-id" data-rule-id></div>
+          <label class="input-label" for="edit-search">replace</label>
+          <div class="edit-segment">
+            <input id="edit-search" type="text" placeholder="string or regex" />
+            <select class="edit-rule-dropdown">
+              <option value="string">string</option>
+              <option value="regex">regex</option>
+            </select>
+          </div>
+          <label class="input-label" for="edit-replace">with</label>
+          <div class="edit-segment">
+            <input id="edit-replace" type="text" placeholder="string w/ matching groups (e.g. $1, $2, etc.)" />
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="edit-view-container">
-        <div id="edit-title">
-          <h1 class="edit-title-header">Edit rule</h1>
+
+    <div class="site-view-footer">
+      <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Add new rule." class="icon add"></span>
         </div>
-        <div id="edit-main">
-          <div id="path-id" data-path-id></div>
-          <div id="edit-domain">
-            <label class="input-label" for="edit-domain-path">If a URL matches</label>
-            <div class="edit-segment">
-              <input id="edit-domain-path" type="text" placeholder="place"/>
-              <select class="edit-path-dropdown">
-                <option value="domain">domain</option>
-                <option value="fixpath">path</option>
-                <option value="prefix">prefix</option>
-                <option value="regex">regex</option>
-              </select>
-            </div>
-          </div>
-          <div id="edit-rule">
-            <div id="rule-id" data-rule-id></div>
-            <label class="input-label" for="edit-search">replace</label>
-            <div class="edit-segment">
-              <input id="edit-search" type="text" placeholder="string or regex" />
-              <select class="edit-rule-dropdown">
-                <option value="string">string</option>
-                <option value="regex">regex</option>
-              </select>
-            </div>
-            <label class="input-label" for="edit-replace">with</label>
-            <div class="edit-segment">
-              <input id="edit-replace" type="text" placeholder="string w/ matching groups (e.g. $1, $2, etc.)" />
-            </div>
-          </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Export your rules." class="icon export"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Import previously exported rules." class="icon import"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Delete all rules." class="icon trash"></span>
         </div>
       </div>
+    </div>
 
-
-      <div class="site-view-footer">
-        <div class="icons">
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Add new rule." class="icon add"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Export your rules." class="icon export"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Import previously exported rules." class="icon import"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Delete all rules." class="icon trash"></span>
-          </div>
+    <div class="edit-view-footer">
+      <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Save rule." class="icon save"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Reset input fields." class="icon reset"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Search for existing rules." class="icon search"></span>
         </div>
       </div>
-
-      <div class="edit-view-footer">
-        <div class="icons">
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Save rule." class="icon save"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Reset input fields." class="icon reset"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Search for existing rules." class="icon search"></span>
-          </div>
-        </div>
-      </div>
+    </div>
     </div>
   </body>
 

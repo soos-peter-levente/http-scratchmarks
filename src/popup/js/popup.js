@@ -567,7 +567,7 @@
 
     voidList();
 
-    withURL(url => renderDomain(url.host));
+    //withURL(url => renderDomain(url.host));
 
     if (site.paths === undefined || site.paths.length === 0) {
       renderEmptyList();
