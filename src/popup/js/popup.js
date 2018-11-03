@@ -144,6 +144,8 @@
   getAll = () => send("getAll"),
 
 
+  getAllSites = () => send("getAllSites"),
+
   /**
    * Message the background to set/update `site'.
    * @param {object} site - a site object.
@@ -198,6 +200,9 @@
       case "toggleSite":
         setSlider(siteToggle, response.payload);
         break;;
+      case "getAllSites":
+        renderDropdown(response.payload);
+        break;;
       default:
         console.log("PU: NOP:", response);
     }
@@ -218,7 +223,8 @@
   editFooter = $(".edit-view-footer"),
 
   siteRules = $(".site-view-rules"),
-
+  siteDropdown = $(".site-dropdown-container"),
+  
   editTitle = $("#edit-title h1"),
 
   mainToggle = $("#main-status input"),
@@ -253,6 +259,8 @@
   pathTemplate = $("#site-path-template").html(),
   ruleTemplate = $("#site-rule-template").html(),
   emptyListTemplate = $("#empty-list-template").html(),
+  headerTemplate = $("#header-template").html(),
+  dropdownTemplate = $("#dropdown-template").html(),
 
 
   setSlider = (slider, status) => slider.attr("checked", status),
@@ -568,8 +576,6 @@
 
     voidList();
 
-    //withURL(url => renderDomain(url.host));
-
     if (site.paths === undefined || site.paths.length === 0) {
       renderEmptyList();
       return;
@@ -586,9 +592,16 @@
   },
 
 
-  renderDomain = (domain) =>
-      siteUseText.html(render(nameTemplate, { domain: domain }))
-      .find(".site-name").on("click", addDomain),
+  renderHeader = domain => {
+    mainView.prepend(render(headerTemplate, { domain: domain }));
+    mainView.find(".site-display-container").click(showSearchBar);
+    mainView.find(".site-dropdown-container").focusout(hideSearchBar);
+  },
+
+  renderDropdown = domains => {
+    siteDropdown.html(render(dropdownTemplate, { domains: domains }));
+    $(".site-dropdown.list-item").on("click", selectSite);
+  },
 
 
   renderPath = (site, path) => {
@@ -646,6 +659,8 @@
   initialize = () => {
     loadingScreen();
     withURL(url => {
+      renderHeader(url.host);
+      getAllSites(); // dropdown
       state();
       get(url.host);
       showMain();
@@ -696,10 +711,8 @@
   initialize();
 
 
-  $(".site-display-container").click(showSearchBar);
-  $(".site-dropdown-container").focusout(hideSearchBar);
-
   function showSearchBar (event) {
+    getAllSites();
     $(".site-display-container").hide();
     $(".site-dropdown-input-line").show();
     $(".site-dropdown-container").show();
@@ -716,5 +729,8 @@
 
   }
 
-
+  function selectSite (event) {
+    console.log("Selected", event.target);
+  }
+  
 })();

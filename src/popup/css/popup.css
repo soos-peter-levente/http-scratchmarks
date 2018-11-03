@@ -383,6 +383,8 @@ button::-moz-focus-inner {
   margin: auto;
   width: 50%;
   text-align: center;
+  margin-top: 35px;
+  margin-bottom: 15px;
 }
 
 /* TABLE */

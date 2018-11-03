@@ -237,6 +237,11 @@ const BackgroundService = (function () {
     },
 
 
+    getAllSites: function () {
+      return storage.get().then(stored => Object.keys(stored) || {});
+    },
+
+
     put: function (site, prev) {
       return this.get(site.domain)
         .then(stored => new Site(stored).put(site, prev))
