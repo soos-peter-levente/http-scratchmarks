@@ -710,12 +710,14 @@ input:checked + .slider:before {
   background-color: gold;
   cursor: pointer;
 }
+/*
 .site-dropdown.list-item:nth-child(odd) {
   background-color: gainsboro;
 }
 .site-dropdown.list-item:nth-child(even) {
   background-color: white;
-}
+ }
+*/
 
 .site-dropdown-wrapper {
   z-index: 11;
