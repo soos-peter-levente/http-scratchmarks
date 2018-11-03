@@ -703,6 +703,8 @@ input:checked + .slider:before {
   display: block;
   padding-left: 50px;
 }
+.site-dropdown.list-item:nth-child(odd):focus,
+.site-dropdown.list-item:nth-child(even):focus,
 .site-dropdown.list-item:nth-child(odd):hover,
 .site-dropdown.list-item:nth-child(even):hover {
   background-color: gold;
