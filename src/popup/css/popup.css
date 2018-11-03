@@ -636,6 +636,7 @@ input:checked + .slider:before {
   mask-image: url(../icons/plus-solid.svg);
   mask-repeat: no-repeat;
   content: "";
+  margin-right: 8px;
 }
 .site-options.delete-all-rules {
   mask-image: url(../icons/trash-alt-regular.svg);
@@ -645,7 +646,7 @@ input:checked + .slider:before {
 }
 .site-options.toggle-site-state {
   background-color: inherit;
-  padding-right: 12px;
+  padding-right: 22px;
   padding-top: 3px;
 }
 .site-options.add-site-rule:hover,
@@ -695,9 +696,15 @@ input:checked + .slider:before {
 }
 .site-dropdown.list-item {
   width: 100%;
-  height: 50px;
+  line-height: 35px;
+  font-size: 11px;
   display: block;
   padding-left: 50px;
+}
+.site-dropdown.list-item:nth-child(odd):hover,
+.site-dropdown.list-item:nth-child(even):hover {
+  background-color: gold;
+  cursor: pointer;
 }
 .site-dropdown.list-item:nth-child(odd) {
   background-color: gainsboro;
