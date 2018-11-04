@@ -42,10 +42,11 @@
       "src/background/lib/Rule.js",
       "src/background/lib/Path.js",
       "src/background/lib/Site.js",
-      "src/background/lib/RuleFilter.js",
       "src/background/lib/Storage.js",
+      "src/background/lib/RuleFilter.js",
       "src/background/lib/RequestSearchAndReplace.js",
-      "src/background/lib/BackgroundService.js",
+      "src/background/lib/RequestProcessor.js",
+      "src/background/lib/Dispatch.js",
 
       "src/background/background.js"
     ]

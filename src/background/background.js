@@ -21,17 +21,7 @@
  * SOFTWARE. */
 
 
-(function () {
+"use strict";
 
 
-  "use strict";
-
-
-  const bg = new BackgroundService();
-
-
-  bg.start();
-  bg.listen();
-
-
-})();
+new Dispatch().enableMessages();

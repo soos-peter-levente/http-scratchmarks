@@ -24,4 +24,74 @@
 "use strict";
 
 
-new Popup().initialize();
+var log = prefixLog("Popup");
+
+
+const Popup = (function () {
+
+
+  const
+
+
+  message = new Messenger(),
+
+
+  Popup = function () {
+    this.loaderContainer = $(".popup-loader-container");
+    this.bodyContainer = $(".body-wrapper");
+    this.renderLoader();
+  };
+
+
+  Popup.prototype = {
+
+
+    initialize: function () {
+      getCurrentURL(url => {
+        this.showLoader();
+        this.loadSite(url);
+        setTimeout(() => {
+          this.hideLoader();
+          this.showPopup();
+        }, 200);
+      });
+    },
+
+
+    renderLoader: function () {
+      this.loaderContainer.html(render("popup-loader-template", {}));
+    },
+
+
+    showLoader: function () {
+      this.loaderContainer.show();
+    },
+
+
+    hideLoader: function () {
+      this.loaderContainer.hide();
+    },
+
+
+    loadSite: function (site) {
+      message.getSite(site, data => new MainView(data));
+    },
+
+
+    showPopup: function () {
+      this.bodyContainer.addClass("visible");
+    },
+
+
+    hidePopup: function () {
+      this.bodyContainer.removeClass("visible");
+    },
+
+
+  };
+
+
+  return Popup;
+
+
+})();

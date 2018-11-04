@@ -2,105 +2,65 @@
   <head>
     <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" href="../css/popup.css"/>
-    <script src="../js/third-party/jquery-3.3.1.slim.min.js"></script>
-    <script src="../js/third-party/mustache.min.js"></script>
-    <script src="../../util/util.js"></script>
     <title>HTTP Scratchmarks</title>
   </head>
-
   <body>
-    <div class="popup-loader">
-      <div class="popup-loader-animation-container">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling">
-          <circle cx="50" cy="50" fill="none" ng-attr-stroke="{{config.color}}" ng-attr-stroke-width="{{config.width}}" ng-attr-r="{{config.radius}}" ng-attr-stroke-dasharray="{{config.dasharray}}" stroke="#f5bb16" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
-            <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="0.6s" begin="0s" repeatCount="indefinite">
-            </animateTransform>
-          </circle>
-        </svg>
-      </div>
-    </div>
+    <div class="popup-loader-container"></div>
     <div class="body-wrapper">
-      <div class="main-view-container">
-        
-        <div class="site-dropdown-container"></div>
-        <div class="site-rules-container">
-          <div class="site-view-rules"></div>
-        </div>
-      </div>
 
+      <div class="main-view-container">
+        <div class="main-view-header-container"></div>
+        <div class="site-dropdown-container"></div>
+        <div class="site-rules-container"><div class="site-view-rules"></div></div>
+        <div class="main-view-footer-container"></div>
+      </div>
 
       <div class="edit-view-container">
-        <div id="edit-title">
-          <h1 class="edit-title-header">Edit rule</h1>
-        </div>
-        <div id="edit-main">
-          <div id="path-id" data-path-id></div>
-          <div id="edit-domain">
-            <label class="input-label" for="edit-domain-path">If a URL matches</label>
-            <div class="edit-segment">
-              <input id="edit-domain-path" type="text" placeholder="place"/>
-              <select class="edit-path-dropdown">
-                <option value="domain">domain</option>
-                <option value="fixpath">path</option>
-                <option value="prefix">prefix</option>
-                <option value="regex">regex</option>
-              </select>
-            </div>
-          </div>
-          <div id="edit-rule">
-            <div id="rule-id" data-rule-id></div>
-            <label class="input-label" for="edit-search">replace</label>
-            <div class="edit-segment">
-              <input id="edit-search" type="text" placeholder="string or regex" />
-              <select class="edit-rule-dropdown">
-                <option value="string">string</option>
-                <option value="regex">regex</option>
-              </select>
-            </div>
-            <label class="input-label" for="edit-replace">with</label>
-            <div class="edit-segment">
-              <input id="edit-replace" type="text" placeholder="string w/ matching groups (e.g. $1, $2, etc.)" />
-            </div>
-          </div>
-        </div>
+        <div class="edit-view-header-container"></div>
+        <div class="edit-view-editor-container"></div>
+        <div class="edit-view-footer-container"></div>
       </div>
 
+    </div>
+  </body>
 
-      <div class="site-view-footer">
-        <div class="icons">
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Add new rule." class="icon add"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Export your rules." class="icon export"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Import previously exported rules." class="icon import"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Delete all rules." class="icon trash"></span>
-          </div>
+  <script id="main-view-footer-template" type="text/template">
+    <div class="site-view-footer">
+      <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Add new rule." class="icon add"></span>
         </div>
-      </div>
-
-      <div class="edit-view-footer">
-        <div class="icons">
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Save rule." class="icon save"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Reset input fields." class="icon reset"></span>
-          </div>
-          <div class="icon-wrapper">
-            <span tabindex="0" title="Search for existing rules." class="icon search"></span>
-          </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Export your rules." class="icon export"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Import previously exported rules." class="icon import"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Delete all rules." class="icon trash"></span>
         </div>
       </div>
     </div>
-  </body>
+  </script>
+
+  <script id="edit-view-footer-template" type="text/template">
+    <div class="edit-view-footer">
+      <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Save rule." class="icon save"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Reset input fields." class="icon reset"></span>
+        </div>
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Search for existing rules." class="icon search"></span>
+        </div>
+      </div>
+    </div>
+  </script>
 
   <script id="dropdown-template" type="text/template">
     <div class="site-dropdown-wrapper">
@@ -109,21 +69,31 @@
         <a class="site-dropdown list-item" tabindex="0">{{.}}</a>
         {{ /domains }}
       </div>
-    </script>
+    </div>
+  </script>
 
-  </div>
+  <script id="popup-loader-template" type="text/template">
+    <div class="popup-loader-animation-container">
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling">
+        <circle cx="50" cy="50" fill="none" stroke="#f5bb16" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
+          <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="0.6s" begin="0s" repeatCount="indefinite">
+          </animateTransform>
+        </circle>
+      </svg>
+    </div>
+  </script>
 
-  <script id="header-template" type="text/template">
+
+  <script id="main-view-header-template" type="text/template">
     <div class="extension-header-container" title="Change HTTP responses before Firefox loads them.">
       <div class="extension-header-icon"></div>
       <div class="extension-header-text">Scratchmarks</div>
       <div class="extension-header-toggle" title="Extension on/off."></div>
     </div>
+  </script>
 
-    <div class="extension-description-container">
-      <span class="description">Change HTTP responses before Firefox loads them.</span>
-    </div>
 
+  <script id="main-view-sitebar-template" type="text/template">
     <div class="site-selector-container" title="Select site.">
 
       <div class="site-display-container">
@@ -140,14 +110,13 @@
         <div class="site-options add-site-rule" title="Add domain rule for site."></div>
         <div class="site-options toggle-site-state" title="Enable/disable site rules.">
           <label class="switch">
-            <input type="checkbox" checked>
+            <input type="checkbox" checked="{{ isSiteEnabled }}">
             <span class="slider round"></span>
           </label>
         </div>
       </div>
     </div>
   </script>
-
 
   <script id="site-path-template" type="text/template">
       <div class="site-rule-wrapper" title="{{ pathType }}: {{ pathName }}">
@@ -186,6 +155,14 @@
   <script id="empty-list-template" type="text/template">
     <div class="info empty-list">There are no rules associated with this site.</div>
   </script>
-  
+
+  <script src="../js/third-party/jquery-3.3.1.slim.min.js"></script>
+  <script src="../js/third-party/mustache.min.js"></script>
+  <script src="../../util/util.js"></script>
+  <script src="../js/lib/Messenger.js"></script>
+  <script src="../js/lib/MainView.js"></script>
+  <script src="../js/lib/EditView.js"></script>
+  <script src="../js/lib/Popup.js"></script>
   <script src="../js/popup.js"></script>
+
 </html>

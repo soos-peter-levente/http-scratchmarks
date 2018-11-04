@@ -14,13 +14,16 @@ body {
   transition: all 0.3s;
   position: relative;
 }
-.body-wrapper.active {
+.body-wrapper.visible {
   opacity: 100;
+}
+.popup-loader-container {
+  height: auto;
 }
 .popup-loader-animation-container {
   position: relative;
   left: 150px;
-  top: 115px;
+  top: 40px;
   width: 40px;
 }
 @media screen and ( min-height: 550px ) {
@@ -657,7 +660,6 @@ input:checked + .slider:before {
 }
 
 .site-dropdown-container {
-  display: none;
   width: 100%;
   height: inherit;
   line-height: 50px;
