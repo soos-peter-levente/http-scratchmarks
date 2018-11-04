@@ -36,6 +36,9 @@ const MainView = (function () {
   message = new Messenger(),
 
 
+  events = new Events(),
+
+
   MainView = function (site) {
 
     this.container = $(".main-view-container");
@@ -84,6 +87,7 @@ const MainView = (function () {
         isSiteEnabled: (!isEmptyObject(site) && site.isSiteEnabled !== undefined) ?
           site.isSiteEnabled : true
       }));
+      events.addSiteBarEvents(this.siteBarContainer, site);
     },
 
 
@@ -99,12 +103,14 @@ const MainView = (function () {
 
     renderEmptyList: function () {
       this.ruleContainer.html(render("empty-list"));
+      events.addEmptyListEvents(this.ruleContainer);
     },
 
 
     renderFooter: function () {
       this.footerContainer.empty();
       this.footerContainer.html(render("main-view-footer"));
+      events.addFooterEvents(this.footerContainer);
     }
 
   };
