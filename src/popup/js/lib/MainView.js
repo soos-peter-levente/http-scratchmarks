@@ -80,7 +80,7 @@ const MainView = (function () {
     renderSiteBar: async function (site) {
       this.siteBarContainer.empty();
       this.siteBarContainer.html(render("main-view-sitebar-template", {
-        domain: site.domain || await getCurrentURL(),
+        domain: site.domain || await getCurrentDomain(),
         isSiteEnabled: (!isEmptyObject(site) && site.isSiteEnabled !== undefined) ?
           site.isSiteEnabled : true
       }));

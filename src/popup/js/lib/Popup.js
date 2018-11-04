@@ -47,9 +47,9 @@ const Popup = (function () {
 
 
     initialize: function () {
-      getCurrentURL(url => {
+      getCurrentDomain(domain => {
         this.showLoader();
-        this.loadSite(url);
+        this.loadSite(domain);
         setTimeout(() => {
           this.hideLoader();
           this.showPopup();

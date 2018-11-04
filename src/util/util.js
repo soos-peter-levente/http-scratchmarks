@@ -20,8 +20,8 @@ function loadTemplate (template) {
   return $("#" + template).html();
 };
 
-async function getCurrentURL (callback) {
+async function getCurrentDomain (callback) {
   let tabs = await browser.tabs.query({ currentWindow: true, active: true });
-  let url = new URL(tabs[0].url).host;
-  return callback ? callback(url) : url;
+  let domain = new URL(tabs[0].url).host;
+  return callback ? callback(domain) : domain;
 };
