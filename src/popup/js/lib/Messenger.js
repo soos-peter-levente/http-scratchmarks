@@ -71,7 +71,7 @@ const Messenger = (function () {
   Messenger = function () {
     if (!instance) {
       instance = this;
-      this.handlingIsEnabled = true;
+      this.active = true;
       this.background = browser.runtime.connect( { name: "background" } ),
       this.handleResponses();
     }
@@ -88,13 +88,13 @@ const Messenger = (function () {
 
 
     handleResponses: function () {
-      this.handlingIsEnabled = true;
+      this.active = true;
       this.background.onMessage.addListener(handle);
     },
 
 
     ignoreResponses: function () {
-      this.handlingIsEnabled = false;
+      this.active = false;
       this.background.onMessage.removeListener(handle);
     },
 
@@ -181,7 +181,7 @@ const Messenger = (function () {
         args: args || []
       });
 
-      if (this.handlingIsEnabled) {
+      if (this.active) {
         callbacks[messageID] = callback || (()=>{});
       }
 
