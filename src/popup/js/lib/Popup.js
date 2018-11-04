@@ -59,7 +59,7 @@ const Popup = (function () {
 
 
     renderLoader: function () {
-      this.loaderContainer.html(render("popup-loader-template", {}));
+      this.loaderContainer.html(render("popup-loader", {}));
     },
 
 

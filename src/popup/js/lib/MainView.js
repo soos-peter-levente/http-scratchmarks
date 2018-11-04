@@ -73,13 +73,13 @@ const MainView = (function () {
     renderHeader: async function () {
       message.isExtensionEnabled(resp => log(resp));
       this.headerContainer.empty();
-      this.headerContainer.html(render("main-view-header-template"));
+      this.headerContainer.html(render("main-view-header"));
     },
 
 
     renderSiteBar: async function (site) {
       this.siteBarContainer.empty();
-      this.siteBarContainer.html(render("main-view-sitebar-template", {
+      this.siteBarContainer.html(render("main-view-sitebar", {
         domain: site.domain || await getCurrentDomain(),
         isSiteEnabled: (!isEmptyObject(site) && site.isSiteEnabled !== undefined) ?
           site.isSiteEnabled : true
@@ -98,13 +98,13 @@ const MainView = (function () {
 
 
     renderEmptyList: function () {
-      this.ruleContainer.html(render("empty-list-template"));
+      this.ruleContainer.html(render("empty-list"));
     },
 
 
     renderFooter: function () {
       this.footerContainer.empty();
-      this.footerContainer.html(render("main-view-footer-template"));
+      this.footerContainer.html(render("main-view-footer"));
     }
 
   };

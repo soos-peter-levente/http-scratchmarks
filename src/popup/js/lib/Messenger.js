@@ -177,7 +177,7 @@ const Messenger = (function () {
       });
 
       this.background.postMessage({
-        id: messageID, 
+        id: messageID,
         label: label,
         args: args || []
       });
