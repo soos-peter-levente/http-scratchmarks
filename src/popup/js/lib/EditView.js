@@ -23,6 +23,11 @@ const EditView = (function () {
   EditView.prototype = {
 
 
+    reloadView: function () {
+
+    },
+
+
     showView: function () {
       this.container.show();
     },

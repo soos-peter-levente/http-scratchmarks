@@ -22,15 +22,19 @@ const MainView = (function () {
     this.ruleContainer = $(".site-rules-container .site-view-rules");
     this.footerContainer = $(".main-view-footer-container");
 
-    this.renderHeader();
-    this.renderSiteBar(site);
-    this.renderRules(site.paths);
-    this.renderFooter();
-
+    this.reloadView(site);
   };
 
 
   MainView.prototype = {
+
+
+    reloadView: function (site) {
+      this.renderHeader();
+      this.renderSiteBar(site);
+      this.renderRules(site.paths);
+      this.renderFooter();
+    },
 
 
     showView: function () {
