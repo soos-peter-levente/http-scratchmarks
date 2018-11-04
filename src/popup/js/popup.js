@@ -298,7 +298,7 @@
    * involved is too much for such a lean popup anyway. A domain
    * selector dropdown below the main toggle could also work.
    */
-  
+
 
   withURL = callback =>
     browser.tabs.query({ currentWindow: true, active: true })
@@ -595,13 +595,17 @@
   renderHeader = domain => {
     mainView.prepend(render(headerTemplate, { domain: domain }));
     $(".site-display-container").click(showSearchBar);
+    $(".site-options.add-site-rule").click(addDomain);
+    $(".site-options.delete-all-rules").click(deleteSite);
+    $(".site-options.toggle-site-state").click(flipSiteSwitch);
   },
 
 
   renderDropdown = domains => {
-    siteDropdown.html(render(dropdownTemplate, { domains: domains }));
+    $(".site-dropdown-container").html(render(dropdownTemplate, { domains: domains }));
     $("#site-dropdown-input").on("input", filterDropdown);
     $("#site-dropdown-input").on("keydown", jumpToDropdown);
+    $(".site-dropdown.list-item").on("click", selectSite);
   },
 
 
@@ -621,6 +625,7 @@
   hideSearchBar = event => {
     $(".site-display-container").show();
     $(".site-dropdown-container").hide();
+    $(".site-dropdown-input-line").hide();
     $(".site-options.delete-all-rules").show();
     $(".site-options.toggle-site-state").show();
     $(".site-rules-container").show();
@@ -628,17 +633,16 @@
 
 
   selectSite = function (event) {
-    console.log("Selected", event);
+    let site = event.target.innerText;
+    log("Selected", site);
+    get(site);
+    $(".site-display-container .site-name").text(site);
+    hideSearchBar();
   },
 
 
   filterDropdown = event => {
     let input = $("#site-dropdown-input").val();
-    if (event.key === 27) {
-      event.preventDefault();
-      hideSearchBar();
-      return;
-    }
     $(".site-dropdown.list-item").each(function (i) {
       if (! $(this).text().startsWith(input)) {
         $(this).hide();
