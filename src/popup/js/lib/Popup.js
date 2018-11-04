@@ -24,13 +24,13 @@
 "use strict";
 
 
-var log = prefixLog("Popup");
-
-
 const Popup = (function () {
 
 
   const
+
+
+  log = prefixLog("Popup"),
 
 
   message = new Messenger(),

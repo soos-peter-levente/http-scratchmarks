@@ -1,13 +1,13 @@
 "use strict";
 
 
-var log = prefixLog("RequestProcessor"),
-
-
-RequestProcessor = (function () {
+const RequestProcessor = (function () {
 
 
   const
+
+
+  log = prefixLog("RequestProcessor"),
 
 
   storage = new Storage(),

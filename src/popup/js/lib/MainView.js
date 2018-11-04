@@ -1,13 +1,13 @@
 "use strict";
 
 
-var log = prefixLog("MainView");
-
-
 const MainView = (function () {
 
 
   const
+
+
+  log = prefixLog("MainView"),
 
 
   message = new Messenger(),

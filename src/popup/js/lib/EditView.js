@@ -1,13 +1,13 @@
 "use strict";
 
 
-var log = prefixLog("EditView");
-
-
 const EditView = (function () {
 
 
   const
+
+
+  log = prefixLog("EditView"),
 
 
   message = new Messenger(),

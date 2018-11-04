@@ -24,9 +24,6 @@
 "use strict";
 
 
-var log = prefixLog("Message");
-
-
 const Messenger = (function () {
 
 
@@ -54,6 +51,9 @@ const Messenger = (function () {
 
 
   const
+
+
+  log = prefixLog("Message"),
 
 
   /**

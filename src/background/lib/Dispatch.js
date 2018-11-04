@@ -24,13 +24,13 @@
 "use strict";
 
 
-var log = prefixLog("Dispatch");
-
-
 const Dispatch = (function () {
 
 
   const
+
+
+  log = prefixLog("Dispatch"),
 
 
   storage = new Storage(),
