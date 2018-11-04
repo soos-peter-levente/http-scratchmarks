@@ -53,7 +53,7 @@ const Messenger = (function () {
   const
 
 
-  log = prefixLog("Message"),
+  log = prefixLog("Popup"),
 
 
   /**

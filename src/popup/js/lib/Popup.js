@@ -39,7 +39,6 @@ const Popup = (function () {
   Popup = function () {
     this.loaderContainer = $(".popup-loader-container");
     this.bodyContainer = $(".body-wrapper");
-    this.renderLoader();
   };
 
 
@@ -48,6 +47,7 @@ const Popup = (function () {
 
     initialize: function () {
       getCurrentDomain(domain => {
+        this.renderLoader();
         this.showLoader();
         this.loadSite(domain);
         setTimeout(() => {
