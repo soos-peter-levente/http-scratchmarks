@@ -27,7 +27,8 @@
 const Messenger = (function () {
 
 
-  /* The previous approach to the messaging between the popup and the
+  /* The Messenger object exchanges data with the background. The
+   * previous approach to the messaging between the popup and the
    * background (dispatch on string labels) turned out to be broken in
    * a fundamental way: each unique use case of the API required a
    * uniquely named call. To avoid that sort of proliferation, a
@@ -167,7 +168,7 @@ const Messenger = (function () {
      * @param {array} args -- arguments to pass to background.
      */
     send: function (label, callback, ...args) {
-      messageID++;
+      messageID++; // always unique
 
       log("to Dispatch: ", {
         label: label,
@@ -176,7 +177,7 @@ const Messenger = (function () {
       });
 
       this.background.postMessage({
-        id: messageID, // increment guarantees uniqueness in session
+        id: messageID, 
         label: label,
         args: args || []
       });
