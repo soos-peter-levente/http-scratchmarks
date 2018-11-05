@@ -85,14 +85,18 @@
 
   renderMain = () => {
     mainHeader.html(render("extension-header", { title: "Scratchmarks"}));
+    onClickOrEnter(mainHeader.find(".extension-header-toggle"), event => {
+      message.toggleExtension(status => setMainToggle(status));
+    });
     mainFooter.html(render("main-view-footer"));
   },
 
 
   renderEdit = () => {
-    editHeader.html(render("extension-header", {
-      title: "Add new rule"
-    }));
+    editHeader.html(render("extension-header", { title: "Add new rule"}));
+    onClickOrEnter(editHeader.find(".extension-header-toggle"), event => {
+      message.toggleExtension(status => setMainToggle(status));
+    });
     editEditor.html(render("editor"));
     editFooter.html(render("edit-view-footer"));
   },
@@ -109,7 +113,7 @@
     let deleteIcon = mainSiteBar.find(".delete-all-rules");
     let addRuleIcon = mainSiteBar.find(".add-site-rule");
     let siteToggle = mainSiteBar.find(".toggle-site-state");
-
+    let siteName = mainSiteBar.find(".site-name");
 
     onClickOrEnter(deleteIcon, () => {
       message.deleteSite({ domain: site });
@@ -117,7 +121,8 @@
     });
     onClickOrEnter(addRuleIcon, () => addNewRule(site, data[site]));
     onClickOrEnter(siteToggle, () => toggleSite(site));
-
+    onClickOrEnter(siteName, () => searchDropdown());
+    
     if (isEmptyObject(data) ||
         data === undefined ||
         data.paths === undefined ||
@@ -144,6 +149,7 @@
           table.append(renderRule(currentPath.rules[j]), data);
         }
       }
+
       let pathName = element.find(".site-rule-path");
       let contents = element.find(".site-rule-content");
       let addRuleIcon = element.find(".site-rule-options.add");
@@ -253,6 +259,21 @@
 
 
   toggleSite = site => message.toggleSite(site, status => setSiteToggle(status)),
+
+
+  searchDropdown = () => {
+    let display = mainSiteBar.find(".site-display-container");
+    let dropdown = mainSiteBar.find(".site-dropdown-input-line");
+    display.hide();
+    dropdown.show().find("input").focus();
+
+    mainSiteBar.focusout(event => {
+      display.show();
+      dropdown.hide();
+    });
+
+    message.getSiteNames(data => log("Searching these sites:", data));
+  },
 
 
   addNewRule = () => {

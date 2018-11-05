@@ -64,7 +64,7 @@ const Dispatch = (function () {
       const makeResponder = (port) => {
 
         const respond = (message, response) => {
-          log("to Popup: ", { label: message.label, payload: response});
+          log("to Popup: ", { label: message.label, id: message.id, payload: response});
           port.postMessage({
             label: message.label,
             id: message.id,
@@ -138,7 +138,6 @@ const Dispatch = (function () {
 
 
     deleteSite: async function (site) {
-      log("deletes", site);
       if (site.paths !== undefined) {
         return this.getSite(site.domain)
           .then(stored => {

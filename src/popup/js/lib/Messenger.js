@@ -138,8 +138,8 @@ const Messenger = (function () {
     },
 
 
-    getSiteNames: function (site, callback) {
-      this.send("getSiteNames", callback, site);
+    getSiteNames: function (callback) {
+      this.send("getSiteNames", callback);
     },
 
 

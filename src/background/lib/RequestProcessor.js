@@ -56,17 +56,19 @@ const RequestProcessor = (function () {
 
 
   processRequest = function (request) {
+    if (!this.isEnabled) return;
     let url = new URL((request.originUrl) ? request.originUrl : request.url);
     storage.get(url.host)
-      .then(stored => 
+      .then(stored =>
             (stored[url.host].siteIsEnabled === undefined ||
-             stored[url.host].siteIsEnabled === this.isEnabled === true) ?
+             stored[url.host].siteIsEnabled === true) ?
             this.filter.filter(request, stored[url.host]) : [])
       .then(rules => this.processor.exec(request, rules));
   },
 
 
   uncacheResponse = function (response) {
+    if (!this.isEnabled) return;
     storage.get(new URL(response.url).host)
       .then(stored => {
         let headers = { responseHeaders: response.responseHeaders };
@@ -98,7 +100,6 @@ const RequestProcessor = (function () {
 
 
     enable: function () {
-      this.isEnabled = true;
 
       browser.webRequest.onBeforeRequest.addListener(
         processRequest.bind(this), webRequestSettings,
@@ -110,17 +111,18 @@ const RequestProcessor = (function () {
         ["blocking", "responseHeaders"]
       );
 
+      this.isEnabled = true;
       return this.isEnabled;
     },
 
 
     disable: function () {
-      this.isEnabled = false;
 
       browser.webRequest.onBeforeRequest.removeListener(processRequest);
 
       browser.webRequest.onHeadersReceived.removeListener(uncacheResponse);
 
+      this.isEnabled = false;
       return this.isEnabled;
     }
 
