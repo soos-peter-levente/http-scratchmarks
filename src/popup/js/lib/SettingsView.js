@@ -24,78 +24,45 @@
 "use strict";
 
 
-const Popup = (function () {
-
+const SettingsView = (function () {
+  
 
   const
 
 
-  log = prefixLog("Popup"),
+  log = prefixLog("SettingsView"),
 
 
   message = new Messenger(),
 
 
-  Popup = function () {
-    this.loaderContainer = $(".popup-loader-container");
-    this.bodyContainer = $(".body-wrapper");
-    this.mainView = new MainView();
-    this.editView = new EditView();
+  SettingsView = function () {
+    this.container = $(".settings-view-container");
   };
 
 
-  Popup.prototype = {
+  SettingsView.prototype = {
 
 
-    initialize: function () {
-      getCurrentDomain(domain => {
-        this.renderLoader();
-        this.showLoader();
-        this.loadSite(domain);
-        setTimeout(() => {
-          this.hideLoader();
-          this.showPopup();
-        }, 200);
-      });
+    reloadView: function () {
+
     },
 
 
-    renderLoader: function () {
-      this.loaderContainer.html(render("popup-loader", {}));
+    showView: function () {
+      this.container.show();
     },
 
 
-    showLoader: function () {
-      this.loaderContainer.show();
-    },
-
-
-    hideLoader: function () {
-      this.loaderContainer.hide();
-    },
-
-
-    loadSite: function (site) {
-      message.getSite(site, data => {
-        this.mainView.redrawView(data);
-      });
-    },
-
-
-    showPopup: function () {
-      this.bodyContainer.addClass("visible");
-    },
-
-
-    hidePopup: function () {
-      this.bodyContainer.removeClass("visible");
+    hideView: function () {
+      this.container.hide();
     },
 
 
   };
 
 
-  return Popup;
+  return SettingsView;
 
 
 })();

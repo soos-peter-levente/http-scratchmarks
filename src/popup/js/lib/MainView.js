@@ -27,92 +27,114 @@
 const MainView = (function () {
 
 
+  let instance = undefined;
+
+
   const
 
 
   log = prefixLog("MainView"),
-
-
   message = new Messenger(),
 
 
-  events = new Events(),
+  container = $(".main-view-container"),
+  header = $(".main-view-header-container"),
+  siteBar = $(".site-dropdown-container"),
+  rules = $(".site-rules-container .site-view-rules"),
+  footer = $(".main-view-footer-container"),
 
 
   MainView = function (site) {
-
-    this.container = $(".main-view-container");
-
-    this.headerContainer = $(".main-view-header-container");
-    this.siteBarContainer = $(".site-dropdown-container");
-    this.ruleContainer = $(".site-rules-container .site-view-rules");
-    this.footerContainer = $(".main-view-footer-container");
-
-    this.reloadView(site);
+    if (!instance) {
+      instance = this;
+    }
+    if (site) {
+      this.redrawView(site);
+    }
+    return instance;
   };
 
 
   MainView.prototype = {
 
 
-    reloadView: function (site) {
-      this.renderHeader();
-      this.renderSiteBar(site);
-      this.renderRules(site.paths);
-      this.renderFooter();
+    redrawView: function (site) {
+      renderHeader();
+      renderSiteBar(site);
+      renderRules(site.paths);
+      renderFooter();
+      return this;
     },
 
 
     showView: function () {
-      this.container.show();
+      container.show();
+      return this;
     },
 
 
     hideView: function () {
-      this.container.hide();
+      container.hide();
+      return this;
     },
 
 
-    renderHeader: async function () {
-      message.isExtensionEnabled(resp => log(resp));
-      this.headerContainer.empty();
-      this.headerContainer.html(render("main-view-header"));
-    },
-
-
-    renderSiteBar: async function (site) {
-      this.siteBarContainer.empty();
-      this.siteBarContainer.html(render("main-view-sitebar", {
-        domain: site.domain || await getCurrentDomain(),
-        isSiteEnabled: (!isEmptyObject(site) && site.isSiteEnabled !== undefined) ?
-          site.isSiteEnabled : true
-      }));
-      events.addSiteBarEvents(this.siteBarContainer, site);
-    },
-
-
-    renderRules: function (paths) {
-      this.ruleContainer.empty();
-      if (paths && paths.length !== 0) {
-        log("renders paths from", paths);
-      } else {
-        this.renderEmptyList();
-      }
-    },
-
-
-    renderEmptyList: function () {
-      this.ruleContainer.html(render("empty-list"));
-      events.addEmptyListEvents(this.ruleContainer);
-    },
-
-
-    renderFooter: function () {
-      this.footerContainer.empty();
-      this.footerContainer.html(render("main-view-footer"));
-      events.addFooterEvents(this.footerContainer);
+    getInstance: function () {
+      return instance;
     }
 
+  };
+
+
+  async function renderHeader () {
+    header.empty();
+    header.html(render("extension-header", {
+      title: "Scratchmarks"
+    }));
+    message.isExtensionEnabled(status => {
+      header.find(".extension-header-toggle")
+        .toggleClass("active", status);
+    });
+  };
+
+
+  async function renderSiteBar (site) {
+    siteBar.empty();
+    siteBar.html(render("main-view-sitebar", {
+      domain: site.domain || await getCurrentDomain(),
+      isSiteEnabled: (!isEmptyObject(site) && site.isSiteEnabled !== undefined) ?
+        site.isSiteEnabled : true
+    }));
+  };
+
+
+  function renderRules (paths) {
+    rules.empty();
+    if (paths && paths.length !== 0) {
+      log("renders paths from", paths);
+    } else {
+      renderEmptyList();
+    }
+  };
+
+
+  function renderEmptyList () {
+    rules.html(render("empty-list"));
+    onClickOrEnter(rules, event => {
+      new MainView().hideView();
+      new EditView().showView();
+    });
+  };
+
+
+  function renderFooter () {
+    footer.empty();
+    footer.html(render("main-view-footer"));
+  }
+
+
+  function getSelectedSite () {
+    return siteBar.find(".site-name").text();
   };
 
 

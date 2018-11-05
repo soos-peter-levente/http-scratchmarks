@@ -84,10 +84,12 @@ const RequestProcessor = (function () {
 
 
   RequestProcessor = function () {
-    this.isEnabled = true;
+    this.isEnabled = undefined;
     this.filter = new RuleFilter();
     this.processor = new RequestSearchAndReplace();
-    if (this.isEnabled) this.enable();
+    if (this.isEnabled || this.isEnabled === undefined) {
+      this.enable();
+    }
   };
 
 
@@ -107,6 +109,7 @@ const RequestProcessor = (function () {
         ["blocking", "responseHeaders"]
       );
 
+      return this.isEnabled;
     },
 
 
@@ -117,6 +120,7 @@ const RequestProcessor = (function () {
 
       browser.webRequest.onHeadersReceived.removeListener(uncacheResponse);
 
+      return this.isEnabled;
     }
 
 

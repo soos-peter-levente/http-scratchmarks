@@ -18,26 +18,71 @@
       <div class="edit-view-container">
         <div class="edit-view-header-container"></div>
         <div class="edit-view-editor-container"></div>
+
         <div class="edit-view-footer-container"></div>
+      </div>
+
+      <div class="settings-view-container">
+        <div class="settings-view-header-container"></div>
+        <div class="settings-view-content-container"></div>
+        <div class="settings-view-footer-container"></div>
       </div>
 
     </div>
   </body>
 
+  <script id="editor" type="text/template">
+    <div class="edit-path">
+      <div class="input-wrapper">
+        <label class="input-label" for="path-input">If URL matches</label>
+        <input class="input-field" id="path-input"></input>
+        <span class="input-underline"></span>
+      </div>
+      <div class="selector-wrapper">
+        <select class="selector">
+          <option value="domain">domain</option>
+          <option value="fixpath">fixpath</option>
+          <option value="prefix">prefix</option>
+          <option value="regex">regex</option>
+        </select>
+      </div>
+    </div>
+    <div class="edit-search">
+      <div class="input-wrapper">
+        <label for="search-input">replace</label>
+        <textarea class="input-field" id="search-input"></textarea>
+        <span class="input-underline"></span>
+      </div>
+      <div class="selector-wrapper">
+        <select class="selector">
+          <option value="string">string</option>
+          <option value="regex">regex</option>
+        </select>
+      </div>
+    </div>
+    <div class="edit-replace">
+      <div class="input-wrapper">
+        <label for="replace-input">with</label>
+        <textarea class="input-field" id="replace-input"></textarea>
+        <span class="input-underline"></span>
+      </div>
+    </div>
+  </script>
+  
   <script id="main-view-footer" type="text/template">
     <div class="site-view-footer">
       <div class="icons">
         <div class="icon-wrapper">
-          <span tabindex="0" title="Add new rule." class="icon add"></span>
+          <span tabindex="0" title="Open extension settings" class="icon settings"></span>
         </div>
         <div class="icon-wrapper">
-          <span tabindex="0" title="Export your rules." class="icon export"></span>
+          <span tabindex="0" class="icon placeholder"></span>
         </div>
         <div class="icon-wrapper">
-          <span tabindex="0" title="Import previously exported rules." class="icon import"></span>
+          <span tabindex="0" class="icon placeholder"></span>
         </div>
         <div class="icon-wrapper">
-          <span tabindex="0" title="Delete all rules." class="icon trash"></span>
+          <span tabindex="0" class="icon placeholder"></span>
         </div>
       </div>
     </div>
@@ -47,16 +92,16 @@
     <div class="edit-view-footer">
       <div class="icons">
         <div class="icon-wrapper">
-          <span tabindex="0" title="Save rule." class="icon save"></span>
-        </div>
-        <div class="icon-wrapper">
           <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
         </div>
         <div class="icon-wrapper">
-          <span tabindex="0" title="Reset input fields." class="icon reset"></span>
+          <span class="icon placeholder"></span>
         </div>
         <div class="icon-wrapper">
-          <span tabindex="0" title="Search for existing rules." class="icon search"></span>
+          <span class="icon placeholder"></span>
+        </div>
+           <div class="icon-wrapper">
+          <span tabindex="0" title="Save rule." class="icon save"></span>
         </div>
       </div>
     </div>
@@ -84,10 +129,10 @@
   </script>
 
 
-  <script id="main-view-header" type="text/template">
+  <script id="extension-header" type="text/template">
     <div class="extension-header-container" title="Change HTTP responses before Firefox loads them.">
       <div class="extension-header-icon"></div>
-      <div class="extension-header-text">Scratchmarks</div>
+      <div class="extension-header-text">{{ title }}</div>
       <div class="extension-header-toggle" title="Extension on/off."></div>
     </div>
   </script>
@@ -153,7 +198,7 @@
   </script>
 
   <script id="empty-list" type="text/template">
-    <div class="info empty-list">There are no rules associated with this site.</div>
+    <div class="info empty-list">No rules found for site. Click here to add.</div>
   </script>
 
   <script src="../js/third-party/jquery-3.3.1.slim.min.js"></script>

@@ -31,38 +31,72 @@ const EditView = (function () {
 
 
   log = prefixLog("EditView"),
-
-
   message = new Messenger(),
 
+  container = $(".edit-view-container"),
+  header = $(".edit-view-header-container"),
+  editor = $(".edit-view-editor-container"),
+  footer = $(".edit-view-footer-container"),
 
-  EditView = function (site) {
 
-    this.container = $(".edit-view-container");
-
+  EditView = function (site, data) {
+    this.redrawView(data);
+    return this;
   };
 
 
   EditView.prototype = {
 
 
-    reloadView: function () {
-
+    redrawView: function (data) {
+      renderHeader();
+      renderEditor(data);
+      renderFooter();
     },
 
 
     showView: function () {
-      this.container.show();
+      container.show();
     },
 
 
     hideView: function () {
-      this.container.hide();
-    },
+      container.hide();
+    }
 
 
   };
 
+
+  function renderHeader() {
+    header.empty();
+    header.html(render("extension-header", {
+      title: "Add new rule"
+    }));
+    message.isExtensionEnabled(status => {
+      header.find(".extension-header-toggle")
+        .toggleClass("active", status);
+    });
+  };
+
+
+  function renderEditor (data) {
+    editor.empty();
+    editor.html(render("editor"));
+  };
+
+
+  function renderFooter () {
+    footer.empty();
+    footer.html(render("edit-view-footer"));
+    footer.find(".icon.save").click(saveRule);
+  };
+
+  function saveRule () {
+    log("Saving input");
+    new EditView().hideView();
+    new MainView().showView();
+  };
 
   return EditView;
 

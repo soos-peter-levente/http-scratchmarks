@@ -64,8 +64,11 @@ const Messenger = (function () {
    * @param {object} response -- response received from background.
    */
   handle = function (response) {
-    callbacks[response.id](response.payload);
-    delete callbacks[response.id];
+    let callback = callbacks[response.id];
+    if (callback !== undefined) {
+      callback(response.payload);
+      delete callbacks[response.id];
+    }
   },
 
 
@@ -183,7 +186,7 @@ const Messenger = (function () {
       });
 
       if (this.active) {
-        callbacks[messageID] = callback || (()=>{});
+        callbacks[messageID] = callback;
       }
 
     }

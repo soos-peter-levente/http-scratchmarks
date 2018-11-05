@@ -27,31 +27,38 @@
 const Events = (function () {
 
 
+  let instance = undefined;
+
+
   const
 
 
   log = prefixLog("Events"),
-
-
   message = new Messenger(),
 
 
-  onClickOrEnter = (element, callback) => {
-    element.on("keydown", function (event) {
-      if (event.keyCode === 13)
-        callback(event);
-    });
-    element.on("click", function (event) {
-      element.blur();
-      callback(event);
-    });
-  },
-
-
-  Events = function () {};
+  Events = function () {
+    if (!instance) {
+      instance = this;
+    }
+    return instance;
+  };
 
 
   Events.prototype = {
+
+
+    /////////////////
+    // MAIN SCREEN //
+    /////////////////
+
+
+    addHeaderEvents: function (header) {
+      let toggle = header.find(".extension-header-toggle");
+      onClickOrEnter(toggle, event => {
+        message.toggleExtension(status => toggle.toggleClass("active", status));
+      });
+    },
 
 
     addSiteBarEvents: function (siteBar, site) {
@@ -59,14 +66,27 @@ const Events = (function () {
     },
 
 
-    addEmptyListEvents: function (emptyList) {
-      onClickOrEnter(emptyList, () => log("triggers empty list event"));
+    addEmptyListEvents: function (emptyList, site) {
+      onClickOrEnter(emptyList, () => {
+        new EditView(site).showView();
+        new MainView().hideView();
+      });
+    },
+
+
+    addPathEvents: function (path, site) {
+      onClickOrEnter(path, event => log("clicked on a path"));
     },
 
 
     addFooterEvents: function (footer) {
-      onClickOrEnter(footer, () => log("triggers footer event"));
+      onClickOrEnter(footer, event => {
+        let settings = footer.find(".icon.settings");
+        onClickOrEnter(settings, event => log("Open settings"));
+      });
     }
+
+
   };
 
 

@@ -100,7 +100,7 @@ const Dispatch = (function () {
 
 
     toggleExtension: function () {
-      processor.isEnabled() ? processor.disable() : processor.enable();
+      return processor.isEnabled ? processor.disable() : processor.enable();
     },
 
 

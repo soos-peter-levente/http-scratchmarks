@@ -30,102 +30,28 @@ body {
   body {
     overflow-y: visible;
   }
+  .edit-view-footer,
   .site-view-footer {
     box-shadow: 0px 0px 2px 1px #88888888;
   }
 }
 
+/* CONTAINERS */
 
-input {
-  border: none;
-  border-bottom: 1px solid gray;
-}
-label {
-  padding-bottom: 10px;
-}
-.edit-title-header,
-.main-title-header {
-  padding: 15px 0px 0px 15px;
-  text-align: center;
-  font-size: 14px;
-}
-.main-description {
-  font-size: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
-}
 .main-view-container {
   max-height: 550px;
+  height: 220px;
   margin-bottom: 80px;
 }
+
 .edit-view-container {
   display: none;
+  max-height: 550px;
+  height: auto;
 }
-#edit-search,
-#edit-domain-path {
-  width: 70%
-}
-#edit-replace {
-  width: 100%;
-}
-.edit-segment {
-  display: flex;
-  padding-bottom: 15px;
-  padding-top: 5px;
-}
-.edit-segment select {
-  width: 25%;
-  margin-left: 10px;
-}
-#edit-main {
-  font-size: 10px;
-  padding-right: 15px;
-  padding-left: 15px;
-}
-#main {
-  padding: 15px 5px 15px 15px;
-  margin-bottom: 75px;
-}
-#main-title {
-  display: flex;
-}
-.site-path {
-  color: grey;
-  cursor: pointer;
-}
-.site-path:hover {
-  color: green;
-}
-#edit-save-rule {
-  float: right;
-}
-#edit-cancel {
-  float: left;
-}
-#site-add-rule{
-  margin: auto;
-  width: 25%;
-}
-.site-rule-buttons {
-  padding-bottom: 20px;
-}
-.edit-rule-buttons {
-  height: 50px;
-}
-button {
-  cursor: pointer;
-  border: none;
-  color: white;
-  padding: 10px;
-  background-color: #2196F3;
-  text-align: center;
-  text-decoration: none;
-}
-button:disabled {
-  cursor: not-allowed;
-  color: white;
-  background-color: silver;
-}
+
+
+
 .site-rule-wrapper {
   /*box-shadow: 0px 0px 1px 0px #88888888;*/
   transition: all 0.3s;
@@ -174,6 +100,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   background-color: white;
   margin: 0px;
   width: 100%;
+  height: 40px;
 }
 
 .icons {
@@ -196,6 +123,25 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
 .icon:focus,
 .icon:hover {
   background-color: black;
+}
+.icon.placeholder {
+  opacity: 0;
+  padding: 12px;
+  margin: 25px;
+}
+.icon.settings {
+  mask-image: url(../icons/cogs-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 12px;
+  margin: 0px;
+}
+.icon.search {
+  mask-image: url(../icons/search-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 15px;
+  margin: 25px;
+  padding: 15px 15px 2px 15px;
+  padding-top: 11px;
 }
 .icon.trash {
   mask-image: url(../icons/trash-solid.svg);
@@ -383,11 +329,13 @@ button::-moz-focus-inner {
   color:darkgray;
 }
 .info.empty-list {
-  margin: auto;
-  width: 50%;
+  cursor: pointer;
+  width: 60%;
   text-align: center;
-  margin-top: 35px;
-  margin-bottom: 15px;
+  position: absolute;
+  top: 150px;
+  left: 75px;
+  display: block;
 }
 
 /* TABLE */
@@ -482,7 +430,7 @@ button::-moz-focus-inner {
   position: relative;
   display: inline-block;
   width: 60px;
-  height: 24px;
+  height: 32px;
 }
 
 /* Hide default HTML checkbox */
@@ -571,7 +519,7 @@ input:checked + .slider:before {
 .extension-header-toggle {
   mask-image: url(../icons/power-off-solid.svg);
   mask-repeat: no-repeat;
-  background-color: lightgreen;
+  background-color: gray;
   transform: scale(0.5);
   cursor: pointer;
   height: 50px;
@@ -581,6 +529,9 @@ input:checked + .slider:before {
   line-height: 55px;
   font-size: 35px;
   font-weight: bold;
+}
+.extension-header-toggle.active {
+  background-color: lightgreen;
 }
 .extension-description-container {
   display: none;
@@ -652,7 +603,7 @@ input:checked + .slider:before {
 .site-options.toggle-site-state {
   background-color: inherit;
   padding-right: 22px;
-  padding-top: 3px;
+  padding-top: 4px;
 }
 .site-options.add-site-rule:hover,
 .site-options.delete-all-rules:hover {
@@ -728,4 +679,81 @@ input:checked + .slider:before {
 }
 .site-rules-container {
   visibility: visible;
+}
+
+
+
+/* EDIT VIEW */
+
+.edit-view-editor-container {
+  background-color: white;
+  padding: 35px 15px 35px 15px;
+}
+.edit-view-footer-container {
+  height: 50px;
+}
+.input-wrapper textarea {
+  resize: none;
+}
+.input-wrapper {
+  display:grid;
+  font-size: 12px;
+}
+.input-field {
+  margin-top: 10px;
+  height: 25px;
+  border: none;
+  transition: border-bottom 0.2s;
+  border-bottom: 1px solid gainsboro;
+}
+.input-underline {
+  border-bottom: 2px solid gold;
+  transition: width 0.2s;
+  position: relative;
+  top: -2px;
+  width: 0%;
+}
+.input-field:focus {
+  border-bottom: none;
+}
+.input-field:focus + .input-underline {
+  width: 95%;
+}
+.input-field:focus {
+  border-bottom: none;
+}
+#search-input {
+  max-width: 230px;
+  min-width: 230px;
+}
+.edit-path {
+  height: 70px;
+}
+.edit-path .input-wrapper {
+  float: left;
+  width: 72%;
+}
+.edit-path .selector-wrapper {
+  float: right;
+  width: 25%;
+  margin-top: 12px;
+}
+.edit-search {
+  height: 70px;
+}
+.edit-search .input-wrapper {
+  float: left;
+  width: 75%;
+}
+.edit-search .selector-wrapper {
+  float: right;
+  width: 25%;
+  margin-top: 12px;
+}
+.edit-replace .input-wrapper textarea{
+  width: 95%;
+}
+.edit-view-footer {
+  padding-top: 0px;
+  padding-bottom: 20px;
 }
