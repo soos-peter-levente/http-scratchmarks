@@ -11,21 +11,15 @@
       <div class="main-view-container">
         <div class="main-view-header-container"></div>
         <div class="site-dropdown-container"></div>
-        <div class="site-rules-container"><div class="site-view-rules"></div></div>
+        <div class="site-rules-container">
+          <div class="site-view-rules"></div></div>
         <div class="main-view-footer-container"></div>
       </div>
 
       <div class="edit-view-container">
         <div class="edit-view-header-container"></div>
         <div class="edit-view-editor-container"></div>
-
         <div class="edit-view-footer-container"></div>
-      </div>
-
-      <div class="settings-view-container">
-        <div class="settings-view-header-container"></div>
-        <div class="settings-view-content-container"></div>
-        <div class="settings-view-footer-container"></div>
       </div>
 
     </div>
@@ -68,12 +62,12 @@
       </div>
     </div>
   </script>
-  
+
   <script id="main-view-footer" type="text/template">
     <div class="site-view-footer">
       <div class="icons">
         <div class="icon-wrapper">
-          <span tabindex="0" title="Open extension settings" class="icon settings"></span>
+          <span tabindex="0" title="Settings" class="icon settings"></span>
         </div>
         <div class="icon-wrapper">
           <span tabindex="0" class="icon placeholder"></span>
@@ -89,23 +83,16 @@
   </script>
 
   <script id="edit-view-footer" type="text/template">
-    <div class="edit-view-footer">
+    <div tabindex="-1" class="edit-view-footer">
       <div class="icons">
+        <div class="icon-wrapper">
+          <span tabindex="0" title="Save rule." class="icon save"></span>
+        </div>
         <div class="icon-wrapper">
           <span tabindex="0" title="Cancel editing." class="icon cancel"></span>
         </div>
-        <div class="icon-wrapper">
-          <span class="icon placeholder"></span>
-        </div>
-        <div class="icon-wrapper">
-          <span class="icon placeholder"></span>
-        </div>
-           <div class="icon-wrapper">
-          <span tabindex="0" title="Save rule." class="icon save"></span>
-        </div>
       </div>
-    </div>
-  </script>
+    </script>
 
   <script id="dropdown" type="text/template">
     <div class="site-dropdown-wrapper">
@@ -205,10 +192,6 @@
   <script src="../js/third-party/mustache.min.js"></script>
   <script src="../../util/util.js"></script>
   <script src="../js/lib/Messenger.js"></script>
-  <script src="../js/lib/Events.js"></script>
-  <script src="../js/lib/MainView.js"></script>
-  <script src="../js/lib/EditView.js"></script>
-  <script src="../js/lib/Popup.js"></script>
   <script src="../js/popup.js"></script>
 
 </html>

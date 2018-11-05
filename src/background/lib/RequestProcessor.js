@@ -58,9 +58,10 @@ const RequestProcessor = (function () {
   processRequest = function (request) {
     let url = new URL((request.originUrl) ? request.originUrl : request.url);
     storage.get(url.host)
-      .then(stored =>
-            (stored.siteIsEnabled === this.isEnabled === true) ?
-            this.filter.filter(request, stored) : [])
+      .then(stored => 
+            (stored[url.host].siteIsEnabled === undefined ||
+             stored[url.host].siteIsEnabled === this.isEnabled === true) ?
+            this.filter.filter(request, stored[url.host]) : [])
       .then(rules => this.processor.exec(request, rules));
   },
 

@@ -14,7 +14,7 @@ body {
   transition: all 0.3s;
   position: relative;
 }
-.body-wrapper.visible {
+.body-wrapper.active {
   opacity: 100;
 }
 .popup-loader-container {
@@ -30,6 +30,9 @@ body {
   body {
     overflow-y: visible;
   }
+  .site-rules-container {
+    padding-bottom: 50px;
+  }
   .edit-view-footer,
   .site-view-footer {
     box-shadow: 0px 0px 2px 1px #88888888;
@@ -40,12 +43,10 @@ body {
 
 .main-view-container {
   max-height: 550px;
-  height: 220px;
   margin-bottom: 80px;
 }
 
 .edit-view-container {
-  display: none;
   max-height: 550px;
   height: auto;
 }
@@ -95,30 +96,25 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   flex: 1;
   position: fixed;
   bottom: 0px;
-  padding-top: 15px;
   padding-bottom: 0px;
   background-color: white;
   margin: 0px;
   width: 100%;
   height: 40px;
 }
-
-.icons {
-  display: flex;
-  margin-right: 15px;
-  padding-bottom: 15px;
+.site-view-footer .icons {
   padding-top: 20px;
-  padding-left: 15px;
+  padding-right: 12px;
 }
 .icon-wrapper {
   height: auto;
+  float: right;
+  transform: scale(0.8);
 }
 .icon {
-  background-color: darkgray;
-  transition: background-color 0.5s;
+  background-color: lightgray;
+  transition: all 0.5s;
   cursor: pointer;
-  height: 0;
-  width: 0;
 }
 .icon:focus,
 .icon:hover {
@@ -172,7 +168,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   margin: 25px;
 }
 .icon.cancel {
-  mask-image: url(../icons/arrow-left-solid.svg);
+  mask-image: url(../icons/times-solid.svg);
   mask-repeat: no-repeat;
   padding: 12px;
   margin: 25px;
@@ -198,8 +194,16 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   mask-repeat: no-repeat;
   padding: 14px;
   margin: 25px;
+  padding-top: 10px;
 }
-
+.icon.save:focus,
+.icon.save:hover {
+  background-color: lightgreen;
+}
+.icon.cancel:focus,
+.icon.cancel:hover {
+  background-color: red;
+}
 .site-rule-options {
   opacity: 0;
   transition: opacity 0.5s;
@@ -213,6 +217,7 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
 /* RULE ACCORDION */
 .site-rule-accordion-wrapper {
   display: flex;
+  height: 40px;
 }
 button::-moz-focus-inner {
   border: 0;
@@ -227,9 +232,9 @@ button::-moz-focus-inner {
   text-align: left;
   outline: none;
   font-size: 15px;
-  width: 100%;
   display: flex;
   padding-right: 10px;
+  padding-top: 12px;
 }
 .site-rule-options .add {
   background-color: darkgray;
@@ -239,7 +244,7 @@ button::-moz-focus-inner {
   height: 0;
   width: 0;
   position: absolute;
-  right: 40px;
+  right: 58px;
   padding: 5px;
   margin-top: 14px;
 }
@@ -254,7 +259,7 @@ button::-moz-focus-inner {
   height: 0;
   width: 0;
   position: absolute;
-  right: 10px;
+  right: 14px;
   padding: 7px;
   margin-top: 11px;
 }
@@ -266,15 +271,18 @@ button::-moz-focus-inner {
   mask-image: url(../icons/caret-right-solid.svg);
   mask-repeat: no-repeat;
   transition: all 0.4s;
+  transform: scale(0.5);
   content: "";
   width: 10px;
   background-color: darkgray;
   margin-top: 4px;
   margin-right: 10px;
   margin-left: 18px;
+  position:relative;
+  top: -6px;
 }
 .site-rule-wrapper.active .site-rule-path:before {
-  transform: rotate(90deg);
+  transform: rotate(90deg) scale(0.5);
   transform-origin: center center;
   content: "";
 }
@@ -332,10 +340,9 @@ button::-moz-focus-inner {
   cursor: pointer;
   width: 60%;
   text-align: center;
-  position: absolute;
-  top: 150px;
-  left: 75px;
   display: block;
+  padding-left: 70px;
+  padding-top: 50px;
 }
 
 /* TABLE */
@@ -612,7 +619,6 @@ input:checked + .slider:before {
 
 .site-dropdown-container {
   width: 100%;
-  height: inherit;
   line-height: 50px;
   background-color: white;
 }
@@ -689,9 +695,6 @@ input:checked + .slider:before {
   background-color: white;
   padding: 35px 15px 35px 15px;
 }
-.edit-view-footer-container {
-  height: 50px;
-}
 .input-wrapper textarea {
   resize: none;
 }
@@ -717,7 +720,7 @@ input:checked + .slider:before {
   border-bottom: none;
 }
 .input-field:focus + .input-underline {
-  width: 95%;
+  width: 100%;
 }
 .input-field:focus {
   border-bottom: none;
@@ -753,7 +756,14 @@ input:checked + .slider:before {
 .edit-replace .input-wrapper textarea{
   width: 95%;
 }
+.edit-view-footer-container {
+  height: 50px;
+}
 .edit-view-footer {
+  float: right;
   padding-top: 0px;
   padding-bottom: 20px;
+}
+.edit-view-footer .icons {
+  margin-right: 100px;
 }

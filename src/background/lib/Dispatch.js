@@ -114,7 +114,8 @@ const Dispatch = (function () {
 
 
     getSite: async function (site) {
-      return await storage.get(site);
+      let stored = await storage.get(site);
+      return stored[site] || {};
     },
 
 
@@ -137,6 +138,7 @@ const Dispatch = (function () {
 
 
     deleteSite: async function (site) {
+      log("deletes", site);
       if (site.paths !== undefined) {
         return this.getSite(site.domain)
           .then(stored => {
