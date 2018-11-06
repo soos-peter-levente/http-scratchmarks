@@ -111,7 +111,8 @@ const Dispatch = (function () {
       } else {
         stored[domain].siteIsEnabled = !stored[domain].siteIsEnabled;
       }
-      return storage.put(domain, stored[domain]);
+      storage.put(domain, stored[domain]);
+      return stored[domain].siteIsEnabled;
     },
 
 

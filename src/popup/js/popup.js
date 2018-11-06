@@ -107,16 +107,17 @@
 
   renderSiteData = (site, data) => {
 
-    mainSiteBar.html(render("main-view-sitebar", {
-      domain: site,
-      isSiteEnabled: (data !== undefined && data.isSiteEnabled !== undefined)
-        ? data.isSiteEnabled : true
-    }));
+    mainSiteBar.html(render("main-view-sitebar", { domain: site }));
 
     let deleteIcon = mainSiteBar.find(".delete-all-rules");
     let addRuleIcon = mainSiteBar.find(".add-site-rule");
     let siteToggle = mainSiteBar.find(".toggle-site-state input");
     let siteName = mainSiteBar.find(".site-name");
+
+    siteToggle.prop(
+      "checked", (data !== undefined && data.siteIsEnabled !== undefined)
+        ? data.siteIsEnabled : true
+    );
 
     onClickOrEnter(deleteIcon, () => deleteSite(deleteIcon));
     onClickOrEnter(addRuleIcon, () => addNewRule(site, data[site]));
