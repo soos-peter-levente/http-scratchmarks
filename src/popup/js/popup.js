@@ -438,7 +438,10 @@
         showMain();
       });
     });
-  };// const defs end
+  }
+
+
+  ;// const defs end
 
 
   initialize();
