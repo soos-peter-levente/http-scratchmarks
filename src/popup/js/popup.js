@@ -362,6 +362,7 @@
     };
 
     if (event.keyCode === 40) {
+      // FIXME: select only visible entries
       let target = $(".site-dropdown.list-item:nth-child(1)");
       onClickOrEnter(target, loadDropdownSelection);
       target.on("keydown", step);
