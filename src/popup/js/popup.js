@@ -115,7 +115,7 @@
 
     let deleteIcon = mainSiteBar.find(".delete-all-rules");
     let addRuleIcon = mainSiteBar.find(".add-site-rule");
-    let siteToggle = mainSiteBar.find(".toggle-site-state");
+    let siteToggle = mainSiteBar.find(".toggle-site-state input");
     let siteName = mainSiteBar.find(".site-name");
 
     onClickOrEnter(deleteIcon, () => deleteSite(deleteIcon));
@@ -402,7 +402,7 @@
 
   deleteSite = (icon) => {
     let domain = getSelectedSite();
-    message.deleteSite(makeSiteObject(domain));
+    message.deleteSite( { domain: domain });
     initializeSiteData();
   },
 

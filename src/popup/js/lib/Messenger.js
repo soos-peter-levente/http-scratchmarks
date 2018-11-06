@@ -123,8 +123,8 @@ const Messenger = (function () {
     },
 
 
-    toggleSite: function (callback) {
-      this.send("toggleSite", callback);
+    toggleSite: function (site, callback) {
+      this.send("toggleSite", callback, site);
     },
 
 

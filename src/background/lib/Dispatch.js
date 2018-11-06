@@ -104,7 +104,14 @@ const Dispatch = (function () {
     },
 
 
-    toggleSite: async function () {
+    toggleSite: async function (domain) {
+      let stored = await storage.get(domain);
+      if (stored[domain].siteIsEnabled === undefined) {
+        stored[domain].siteIsEnabled = false;
+      } else {
+        stored[domain].siteIsEnabled = !stored[domain].siteIsEnabled;
+      }
+      return storage.put(domain, stored[domain]);
     },
 
 
