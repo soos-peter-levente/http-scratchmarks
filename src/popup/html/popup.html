@@ -97,9 +97,9 @@
   <script id="dropdown" type="text/template">
     <div class="site-dropdown-wrapper">
       <div class="site-dropdown-list">
-        {{ #domains }}
-        <a class="site-dropdown list-item" tabindex="0">{{.}}</a>
-        {{ /domains }}
+        {{ #. }}
+        <div class="site-dropdown list-item" tabindex="0">{{.}}</div>
+        {{ /. }}
       </div>
     </div>
   </script>
@@ -134,7 +134,7 @@
 
       <div class="site-dropdown-input-line">
         <label class="site-dropdown-input-label" for="site-dropdown-input"></label>
-        <input id="site-dropdown-input" placeholder="example.org">
+        <input id="site-dropdown-input" placeholder="search domains...">
       </div>
 
       <div class="site-options-container">

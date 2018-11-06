@@ -65,13 +65,16 @@
   },
 
 
-  initializeSiteData = site =>
-    getCurrentDomain(domain => {
-      message.getSite(domain, data => renderSiteData(domain, data));
-      message.isExtensionEnabled(status => setMainToggle(status));
-    }),
-
-
+  initializeSiteData = site => {
+    if (site === undefined) {
+      getCurrentDomain(domain => {
+        message.getSite(domain, data => renderSiteData(domain, data));
+        message.isExtensionEnabled(status => setMainToggle(status));
+      });
+    } else {
+      message.getSite(site, data => renderSiteData(site, data));
+    }
+  },
 
   ///////////////
   // RENDERING //
@@ -103,6 +106,7 @@
 
 
   renderSiteData = (site, data) => {
+
     mainSiteBar.html(render("main-view-sitebar", {
       domain: site,
       isSiteEnabled: (data !== undefined && data.isSiteEnabled !== undefined)
@@ -172,9 +176,28 @@
     return element;
   },
 
+
   renderEmptyList = () => {
     mainRuleView.html(render("empty-list"));
-    mainRuleView.on("click", () => addNewRule());
+    mainRuleView.find(".info.empty-list").click(() => addNewRule());
+  },
+
+
+  renderDropdown = array => {
+    mainRuleView.empty();
+    mainRuleView.find(".site-dropdown-wrapper").remove();
+    mainRuleView.prepend($(render("dropdown", array)));
+
+    let siteBarInput = mainSiteBar.find("#site-dropdown-input");
+
+    siteBarInput.on("input", filterDropdown);
+    siteBarInput.on("keypress", jumpToDropdown);
+
+    $(".site-dropdown.list-item").each(function (i) {
+      $(this).mouseover(function () {
+        onClickOrEnter($(this), loadDropdownSelection);
+      });
+    });
   },
 
 
@@ -293,12 +316,56 @@
     display.hide();
     dropdown.show().find("input").focus();
 
-    mainSiteBar.focusout(event => {
-      display.show();
-      dropdown.hide();
+    message.getSiteNames(array => {
+      renderDropdown(array);
     });
+  },
 
-    message.getSiteNames(data => log("Searching these sites:", data));
+
+  filterDropdown = event => {
+    let input = $("#site-dropdown-input").val();
+    if (event.key === 27) {
+      event.preventDefault();
+      log("Do something with selection");
+      return;
+    }
+    $(".site-dropdown.list-item").each(function (i) {
+      if (! $(this).text().startsWith(input)) {
+        $(this).hide();
+      } else {
+        $(this).show();
+      }
+    });
+  },
+
+
+  loadDropdownSelection = event => {
+    let domain = $(event.target).text();
+    initializeSiteData(domain);
+  },
+
+
+  jumpToDropdown = event => {
+
+    const step = event => {
+      let target = undefined;
+      if (event.keyCode === 40) {
+        target = $(event.target).next();
+      }
+      if (event.keyCode === 38) {
+        target = $(event.target).prev();;
+      }
+      onClickOrEnter(target, loadDropdownSelection);
+      target.on("keydown", step);
+      target.focus();
+    };
+
+    if (event.keyCode === 40) {
+      let target = $(".site-dropdown.list-item:nth-child(1)");
+      onClickOrEnter(target, loadDropdownSelection);
+      target.on("keydown", step);
+      target.focus();
+    };
   },
 
 
@@ -344,13 +411,21 @@
     let domain = getSelectedSite();
     message.deleteSite(makeSiteObject(domain, path));
     icon.parents(".site-rule-wrapper").remove();
+    if ($(".site-rule-wrapper").length === 0) {
+      renderEmptyList();
+    }
   },
 
 
   deleteRule = (path, rule, icon) => {
     let domain = getSelectedSite();
+    let header = icon.parents(".site-rule-table-header-row");
     message.deleteSite(makeSiteObject(domain, path, rule));
     icon.parents(".site-rule-table-row").remove();
+    log("header", header);
+    if ($(".site-rule-table-row").length === 0) {
+      header.remove();
+    }
   },
 
 

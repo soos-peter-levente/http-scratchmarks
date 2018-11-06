@@ -69,10 +69,9 @@ const RuleFilter = (function () {
 
 
   matchPrefix = (pathname, url) =>
-    url.href.startsWith(pathname) ||
-    (url.pathname + url.search).startsWith(pathname) ||
-    (url.domain + url.pathname + url.search).startsWith(pathname)
-
+    (url.href.startsWith(pathname) ||
+     (url.pathname + url.search).startsWith(pathname) ||
+     (url.host + url.pathname + url.search).startsWith(pathname));
 
   ;
 
