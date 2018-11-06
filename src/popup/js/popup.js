@@ -288,17 +288,20 @@
 
 
   makeSiteObject = (site, path, rule) => {
-    let newPath = {
-      pathType: path.pathType,
-      pathName: path.pathName,
-      pathIsEnabled: path.pathIsEnabled
-    };
     let newSite = {
       domain: site,
       siteIsEnabled: true
     };
-    newPath.rules = rule ? [ rule ] : undefined;
-    newSite.paths = newPath ? [ newPath ] : undefined;
+    let newPath = {};
+    if (path !== undefined) {
+      let newPath = {
+        pathType: path.pathType,
+        pathName: path.pathName,
+        pathIsEnabled: path.pathIsEnabled
+      };
+      newPath.rules = rule ? [ rule ] : undefined;
+      newSite.paths = !isEmptyObject(newPath) ? [ newPath ] : undefined;
+    }
     return newSite;
   },
 
