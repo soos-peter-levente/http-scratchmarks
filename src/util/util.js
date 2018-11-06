@@ -21,6 +21,7 @@ function loadTemplate (template) {
 };
 
 function onClickOrEnter (element, callback) {
+  element.off();
   element.on("keydown", function (event) {
     if (event.keyCode === 13)
       callback(event);

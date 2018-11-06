@@ -65,7 +65,7 @@
   },
 
 
-  initializeSiteData = () =>
+  initializeSiteData = site =>
     getCurrentDomain(domain => {
       message.getSite(domain, data => renderSiteData(domain, data));
       message.isExtensionEnabled(status => setMainToggle(status));
@@ -103,7 +103,6 @@
 
 
   renderSiteData = (site, data) => {
-    // create dropdown
     mainSiteBar.html(render("main-view-sitebar", {
       domain: site,
       isSiteEnabled: (data !== undefined && data.isSiteEnabled !== undefined)
@@ -115,14 +114,11 @@
     let siteToggle = mainSiteBar.find(".toggle-site-state");
     let siteName = mainSiteBar.find(".site-name");
 
-    onClickOrEnter(deleteIcon, () => {
-      message.deleteSite({ domain: site });
-      initializeSiteData();
-    });
+    onClickOrEnter(deleteIcon, () => deleteSite(deleteIcon));
     onClickOrEnter(addRuleIcon, () => addNewRule(site, data[site]));
     onClickOrEnter(siteToggle, () => toggleSite(site));
     onClickOrEnter(siteName, () => searchDropdown());
-    
+
     if (isEmptyObject(data) ||
         data === undefined ||
         data.paths === undefined ||
@@ -146,7 +142,7 @@
       if (currentPath.rules.length !== 0) {
         let table = element.find("tbody");
         for (let j = 0; j < currentPath.rules.length; j++) {
-          table.append(renderRule(currentPath.rules[j]), data);
+          table.append(renderRule(currentPath.rules[j], currentPath));
         }
       }
 
@@ -156,7 +152,7 @@
       let deleteIcon = element.find(".site-rule-options.delete");
 
       onClickOrEnter(addRuleIcon, event => addRuleToPath(currentPath, data));
-      onClickOrEnter(deleteIcon, event => deletePath(currentPath, data));
+      onClickOrEnter(deleteIcon, event => deletePath(currentPath, deleteIcon));
       onClickOrEnter(pathName, function () {
         element.toggleClass("active");
         contents.toggleClass("active");
@@ -167,12 +163,12 @@
   },
 
 
-  renderRule = (rule, data) => {
+  renderRule = (rule, path) => {
     let element = $(render("site-rule", rule));
     let deleteIcon = element.find(".delete");
     let searchAndReplace = element.find(".search, .replace");
-    onClickOrEnter(searchAndReplace, event => editRule(rule, data));
-    onClickOrEnter(deleteIcon, event => deleteRule(rule, data));
+    onClickOrEnter(searchAndReplace, event => editRule(rule, path));
+    onClickOrEnter(deleteIcon, event => deleteRule(path, rule, deleteIcon));
     return element;
   },
 
@@ -208,6 +204,7 @@
   showMain = () => {
     editContainer.hide(),
     mainContainer.show();
+    resetEditFields();
   },
 
 
@@ -217,12 +214,25 @@
   },
 
 
+  loadEditFields = (path, rule, disablePath) => {
+    $(".edit-path select").val(path.pathType);
+    $(".edit-path input").val(path.pathName);
+    if (rule !== undefined) {
+      $(".edit-search select").val(rule.ruleType);
+      $(".edit-search textarea").val(rule.ruleSearch);
+      $(".edit-replace textarea").val(rule.ruleReplace);
+    }
+    if (disablePath !== undefined && disablePath)
+      $(".edit-path select, .edit-path input").prop("disabled" ,true);
+  },
+
+
   resetEditFields = () => {
-    $(".edit-path select").val("domain");
+    $(".edit-path select").val("domain").prop("disabled", false);
+    $(".edit-path input").val("").prop("disabled", false);;
     $(".edit-search select").val("string");
-    $(".edit-path input").val("");
-    $(".edit-search input").val("");
-    $(".edit-replace input").val("");
+    $(".edit-search textarea").val("");
+    $(".edit-replace textarea").val("");
   },
 
 
@@ -253,6 +263,22 @@
   },
 
 
+  makeSiteObject = (site, path, rule) => {
+    let newPath = {
+      pathType: path.pathType,
+      pathName: path.pathName,
+      pathIsEnabled: path.pathIsEnabled
+    };
+    let newSite = {
+      domain: site,
+      siteIsEnabled: true
+    };
+    newPath.rules = rule ? [ rule ] : undefined;
+    newSite.paths = newPath ? [ newPath ] : undefined;
+    return newSite;
+  },
+
+
   //////////////////////////
   // STATE & RULE EDITING //
   //////////////////////////
@@ -278,32 +304,53 @@
 
   addNewRule = () => {
     let domain = getSelectedSite();
-    message.getSite(domain, data => {
-      showEdit();
-      $("#path-input").val(domain).focus().select();
-      onClickOrEnter($(".icon.cancel"), event => showMain());
-      onClickOrEnter($(".icon.save"), event => saveRule(domain));
+    showEdit();
+    $("#path-input").val(domain).focus().select();
+    onClickOrEnter($(".icon.cancel"), event => showMain());
+    onClickOrEnter($(".icon.save"), event => saveRule(domain));
+  },
+
+
+  addRuleToPath = path => {
+    let domain = getSelectedSite();
+    loadEditFields(path, undefined, true);
+    showEdit();
+    $("#search-input").focus().select();
+    onClickOrEnter($(".icon.cancel"), event => showMain());
+    onClickOrEnter($(".icon.save"), event => saveRule(domain));
+  },
+
+
+  editRule = (rule, path) => {
+    let domain = getSelectedSite();
+    loadEditFields(path, rule, true);
+    showEdit();
+    $("#search-input").focus().select();
+    onClickOrEnter($(".icon.cancel"), event => showMain());
+    onClickOrEnter($(".icon.save"), event => {
+      message.deleteSite(makeSiteObject(domain, path, rule), response => saveRule(domain));
     });
   },
 
 
-  addRuleToPath = (path, data) => {
-    log("adds a new rule to this path.");
+  deleteSite = (icon) => {
+    let domain = getSelectedSite();
+    message.deleteSite(makeSiteObject(domain));
+    initializeSiteData();
   },
 
 
-  editRule = (rule, data) => {
-    log("edits this rule.");
+  deletePath = (path, icon) => {
+    let domain = getSelectedSite();
+    message.deleteSite(makeSiteObject(domain, path));
+    icon.parents(".site-rule-wrapper").remove();
   },
 
 
-  deletePath = (path, data) => {
-    log("deletes this path.");
-  },
-
-
-  deleteRule = (rule, data) => {
-    log("deletes rule from path");
+  deleteRule = (path, rule, icon) => {
+    let domain = getSelectedSite();
+    message.deleteSite(makeSiteObject(domain, path, rule));
+    icon.parents(".site-rule-table-row").remove();
   },
 
 
