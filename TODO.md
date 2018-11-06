@@ -1,7 +1,6 @@
 * input validation
-* rule editing screen CSS
+* site/path/rule toggles
 * store/load extension settings
-* site dropdown/search field in main
 * import
 * rule search
 * explore rule reordering feature
