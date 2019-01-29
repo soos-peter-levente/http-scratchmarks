@@ -93,7 +93,7 @@
 
 
   renderMain = () => {
-
+    
     mainHeader.html(render("extension-header", { title: "HTTP Scratchmarks"}));
     onClickOrEnter(mainHeader.find(".extension-header-toggle"), event => {
       message.toggleExtension(status => setMainToggle(status));
