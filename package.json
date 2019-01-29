@@ -1,10 +1,11 @@
 {
-  "name": "http-scratchmarks-tests",
+  "name": "http-scratchmarks",
   "version": "1.0.0",
-  "description": "A unit test suite for the extension",
+  "description": "web-ext dev environment and testing framework",
   "dependencies": {},
   "devDependencies": {
-    "jasmine": "^3.3.0"
+    "jasmine": "^3.3.0",
+    "web-ext": "^2.9.3"
   },
   "scripts": {
     "test": "jasmine"

@@ -172,7 +172,7 @@ const Messenger = (function () {
      */
     send: function (label, callback, ...args) {
       messageID++; // always unique
-      
+
       log("to Dispatch: ", {
         label: label,
         id: messageID,

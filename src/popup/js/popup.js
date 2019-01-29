@@ -51,12 +51,18 @@
   editEditor = $(".edit-view-editor-container"),
   editFooter = $(".edit-view-footer-container"),
 
+  optionsContainer = $(".options-view-container"),
+  optionsHeader = $(".options-view-header-container"),
+  optionsEditor = $(".options-view-editor-container"),
+  optionsFooter = $(".options-view-footer-container"),
+
 
   initialize = () => {
     renderLoader();
     showLoader();
     renderMain();
     renderEdit();
+    renderOptions();
     initializeSiteData();
     setTimeout(() => {
       hideLoader();
@@ -87,11 +93,16 @@
 
 
   renderMain = () => {
-    mainHeader.html(render("extension-header", { title: "Scratchmarks"}));
+    
+    mainHeader.html(render("extension-header", { title: "HTTP Scratchmarks"}));
     onClickOrEnter(mainHeader.find(".extension-header-toggle"), event => {
       message.toggleExtension(status => setMainToggle(status));
     });
+
     mainFooter.html(render("main-view-footer"));
+    onClickOrEnter(mainFooter.find(".icon.settings"), event => {
+      showOptions();
+    });
   },
 
 
@@ -202,6 +213,16 @@
   },
 
 
+  renderOptions = () => {
+    optionsHeader.html(render("extension-header", { title: "Options"}));
+    // optionsEditor.html(render("options-list"));
+    optionsFooter.html(render("options-view-footer"));
+    onClickOrEnter(optionsFooter.find(".icon.return"), event => {
+      showMain();
+    });
+  },
+
+
   ////////////////////
   // DOM UTILILTIES //
   ////////////////////
@@ -226,15 +247,28 @@
 
 
   showMain = () => {
-    editContainer.hide(),
+    hideAll();
     mainContainer.show();
     resetEditFields();
   },
 
 
   showEdit = () => {
-    mainContainer.hide();
+    hideAll();
     editContainer.show();
+  },
+
+
+  showOptions = () => {
+    hideAll();
+    optionsContainer.show();
+  },
+
+
+  hideAll = () => {
+    mainContainer.hide();
+    editContainer.hide();
+    optionsContainer.hide();
   },
 
 

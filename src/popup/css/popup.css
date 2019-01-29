@@ -50,8 +50,10 @@ body {
   max-height: 550px;
   height: auto;
 }
-
-
+.options-view-container {
+  max-height: 550px;
+  height: auto;
+}
 
 .site-rule-wrapper {
   /*box-shadow: 0px 0px 1px 0px #88888888;*/
@@ -188,6 +190,15 @@ https://stackoverflow.com/questions/18087098/how-to-remove-delay-on-css3-slide-o
   margin: 25px;
   padding: 15px 15px 2px 15px;
   padding-top: 11px;
+}
+.icon.return {
+  mask-image: url(../icons/arrow-left-solid.svg);
+  mask-repeat: no-repeat;
+  padding: 15px;
+  margin: 25px;
+  padding: 15px 15px 2px 15px;
+  padding-top: 11px;
+
 }
 .icon.save {
   mask-image: url(../icons/check-solid.svg);
@@ -496,7 +507,6 @@ input:checked + .slider:before {
 }
 
 
-
 /* Extension header */
 .extension-header-container {
   background-color: cadetblue;
@@ -669,14 +679,6 @@ input:checked + .slider:before {
   background-color: gold;
   cursor: pointer;
 }
-/*
-.site-dropdown.list-item:nth-child(odd) {
-  background-color: gainsboro;
-}
-.site-dropdown.list-item:nth-child(even) {
-  background-color: white;
- }
-*/
 
 .site-dropdown-wrapper {
   z-index: 11;
@@ -690,7 +692,6 @@ input:checked + .slider:before {
 
 
 /* EDIT VIEW */
-
 .edit-view-editor-container {
   background-color: white;
   padding: 35px 15px 35px 15px;
@@ -767,3 +768,5 @@ input:checked + .slider:before {
 .edit-view-footer .icons {
   margin-right: 100px;
 }
+
+/* OPTIONS VIEW */
